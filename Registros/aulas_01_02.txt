@@ -1,0 +1,95 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 01: Introdução ao FastAPI
+Link: https://www.youtube.com/watch?v=BtIy2aD8k_w&list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq&index=1&pp=iAQB
+
+Arquivo criado: main.py
+--------------------------------
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# Para ativar o app, execute no terminal:
+# uvicorn main:app --reload
+# "--reload" recarrega automaticamente ao salvar alterações
+# "uvicorn" é o servidor que executa o app
+# "main:app" indica o arquivo e a instância do FastAPI
+
+Funcionalidade:
+- Criação da aplicação principal FastAPI.
+- Configuração inicial para rodar o servidor com Uvicorn.
+
+--------------------------------
+
+Aula 02: Estrutura de Rotas com APIRouter
+Link: https://www.youtube.com/watch?v=Eih-eCCDHW0&list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq&index=2&pp=iAQB
+
+Arquivos criados:
+
+1. main.py (atualizado)
+--------------------------------
+from rotas_ordem import order_router
+from rotas_autenticação import auth_router
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# Inclui os routers na aplicação principal
+app.include_router(order_router)
+app.include_router(auth_router)
+
+Funcionalidade:
+- Integração dos módulos de rotas (ordem e autenticação).
+- Organização da aplicação em múltiplos arquivos.
+
+--------------------------------
+
+2. rotas_autenticação.py
+--------------------------------
+from fastapi import APIRouter
+
+auth_router = APIRouter(prefix="/auth", tags=["auth"])
+
+@auth_router.get("/")
+async def autenticacao():
+    return {"Mensagem": "Você acessou a rota /auth/, e está em autenticação"}
+
+Funcionalidade:
+- Criação de rotas específicas para autenticação.
+- Uso de prefix="/auth" para organizar o caminho das rotas.
+- Uso de tags=["auth"] para categorizar no Swagger UI.
+- Retorno de mensagem JSON ao acessar a rota.
+
+--------------------------------
+
+3. rotas_ordem.py
+--------------------------------
+from fastapi import APIRouter
+
+order_router = APIRouter(prefix="/pedidos", tags=["pedidos"])
+
+@order_router.get("/")
+async def pedidos():
+    return {"Mensagem": "Você acessou a rota /order/, e está retornando uma mensagem"}
+
+Funcionalidade:
+- Criação de rotas específicas para pedidos.
+- Uso de prefix="/pedidos" para organizar o caminho das rotas.
+- Uso de tags=["pedidos"] para categorizar no Swagger UI.
+- Retorno de mensagem JSON ao acessar a rota.
+
+--------------------------------
+
+Resumo das Funcionalidades Aprendidas:
+- Uso do FastAPI para criar aplicações web rápidas e organizadas.
+- Execução do servidor com Uvicorn.
+- Estruturação da aplicação em múltiplos arquivos.
+- Criação de rotas com APIRouter, utilizando prefixos e tags.
+- Organização das rotas em módulos separados (autenticação e pedidos).
+- Retorno de respostas JSON para o cliente.
+
+Observação:
+- "prefix" define o caminho da rota.
+- "tags" servem para organizar e categorizar rotas na documentação automática.
+- "async def" é usado para funções assíncronas, permitindo melhor desempenho.

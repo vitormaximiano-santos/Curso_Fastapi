@@ -1,0 +1,74 @@
+REQUESTS AND API ROUTING IN FASTAPI
+
+1. What is a Request in FastAPI?
+- A Request is the incoming message sent by a client (browser, mobile app, another service).
+- It contains:
+  * HTTP Method (GET, POST, PUT, DELETE, etc.)
+  * Path (e.g., /items/5)
+  * Headers (metadata like Content-Type, Authorization)
+  * Query Parameters (optional filters, e.g., ?q=test)
+  * Body (data sent with POST/PUT requests, usually JSON)
+
+FastAPI uses the Request object to access this information and pass it to your endpoint functions.
+
+2. What is API Routing?
+- Routing is the process of matching an incoming request to the correct endpoint function.
+- FastAPI uses decorators (@app.get, @app.post, etc.) to define routes.
+- When a request arrives:
+  * The application checks the path and HTTP method.
+  * It matches them against registered routes.
+  * The corresponding function (endpoint handler) is executed.
+- Routing also supports:
+  * Path parameters (dynamic values in the URL, e.g., /items/{item_id})
+  * Query parameters (optional values in the URL after ?)
+  * Request body parsing (JSON, form data, etc.)
+  * Dependency injection (automatic handling of authentication, validation, etc.)
+
+3. Example with Detailed Explanation
+
+from fastapi import FastAPI, Request
+
+app = FastAPI()
+
+@app.post("/items/")
+async def create_item(request: Request):
+    data = await request.json()
+    return {"received_data": data}
+
+Explanation line by line:
+- from fastapi import FastAPI, Request
+  Imports the FastAPI class and the Request object.
+
+- app = FastAPI()
+  Creates the FastAPI application instance.
+
+- @app.post("/items/")
+  Registers the function "create_item" as the handler for POST requests to /items/.
+
+- async def create_item(request: Request):
+  Defines an asynchronous function that receives the Request object.
+  The Request object contains all details of the incoming request.
+
+- data = await request.json()
+  Reads the request body as JSON. This is common for POST requests where clients send data.
+
+- return {"received_data": data}
+  Returns the received data back to the client in JSON format.
+
+4. Summary
+- Requests are the client’s way of sending data and instructions to the server.
+- API Routing is how FastAPI matches those requests to the correct function.
+- Decorators define which function handles which path and method.
+- The Request object gives access to headers, parameters, and body content.
+
+5. Best Practices/Standards with Requests and API Routing
+- Use descriptive and consistent route paths (e.g., /users/, /items/).
+- Follow RESTful conventions for HTTP methods (GET for read, POST for create, PUT/PATCH for update, DELETE for remove).
+- Validate request data using Pydantic models instead of manually parsing JSON.
+- Keep routes simple and avoid deep nesting; prefer logical grouping with APIRouter.
+- Use query parameters for optional filters and path parameters for required identifiers.
+- Handle errors gracefully with proper status codes (400 for bad request, 404 for not found, 422 for validation errors).
+- Apply authentication and authorization middleware for sensitive routes.
+- Document routes automatically with FastAPI’s OpenAPI/Swagger integration.
+- Ensure consistent response formats (JSON objects with clear keys).
+- Use async functions for I/O-bound operations to maximize performance.

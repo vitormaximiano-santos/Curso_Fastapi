@@ -1,0 +1,81 @@
+ROUTES AND ENDPOINTS IN FASTAPI
+
+1. What are Routes and Endpoints?
+- A Route (path) is the URL path that identifies a functionality in your API.
+  Example: /users/ or /items/{item_id}
+- An Endpoint is the combination of a route with an HTTP method (GET, POST, PUT, DELETE).
+  Example:
+    GET /users/ → returns a list of users
+    POST /users/ → creates a new user
+
+In short: the route is the address, the endpoint is the action performed at that address.
+
+2. Purpose of Routes/Endpoints
+- Organize the API: each route represents a clear operation (list, create, update, delete).
+- Enable client-server communication: clients send requests and receive responses (usually JSON).
+- Define business logic: each endpoint encapsulates part of the application’s logic.
+- Security and control: authentication, authorization, and validation can be applied per route.
+
+3. Decorators in FastAPI
+A decorator in Python is a special function that wraps another function to modify or add behavior.
+In FastAPI, decorators (@app.get, @app.post, etc.) register functions as route handlers.
+
+Main route decorators:
+- @app.get("/path") → used for reading data (consultation).
+- @app.post("/path") → used for creating data.
+- @app.put("/path") → used for updating data.
+- @app.delete("/path") → used for deleting data.
+
+Each decorator:
+1. Defines the HTTP method.
+2. Defines the URL path.
+3. Associates the path with a Python function that executes when the route is called.
+
+4. Example with Detailed Explanation
+
+from fastapi import FastAPI
+
+# Create the FastAPI application
+app = FastAPI()
+
+# Define an endpoint using the @app.get decorator
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: str | None = None):
+    return {"item_id": item_id, "q": q}
+
+Explanation line by line:
+- from fastapi import FastAPI
+  Imports the FastAPI class used to create the application.
+
+- app = FastAPI()
+  Creates an instance of the application. This variable "app" is used to register routes and run the server.
+
+- @app.get("/items/{item_id}")
+  Decorator that registers the function "read_item" as the handler for the route GET /items/{item_id}.
+  {item_id} is a dynamic route parameter.
+
+- def read_item(item_id: int, q: str | None = None):
+  Defines the function executed when the route is accessed.
+  item_id: int → required parameter from the URL, automatically converted to integer.
+  q: str | None = None → optional query string parameter (example: /items/5?q=test).
+
+- return {"item_id": item_id, "q": q}
+  Returns a Python dictionary. FastAPI automatically converts it to JSON in the response.
+
+5. Summary
+- Routes are the URL paths.
+- Endpoints are the actions tied to each route + HTTP method.
+- Decorators (@app.get, @app.post, etc.) register functions as handlers for those routes.
+- Each element of the code has a clear role: create the app, define routes, receive parameters, and return responses.
+
+6. Best Practices/Standards with FastAPI Routes and Decorators
+- Use clear and descriptive route names (e.g., /users/, /items/) to make the API intuitive.
+- Follow RESTful conventions: GET for reading, POST for creating, PUT/PATCH for updating, DELETE for removing.
+- Keep routes consistent and predictable (plural nouns for collections, singular for specific resources).
+- Validate input parameters with type hints and Pydantic models to ensure data integrity.
+- Document endpoints using FastAPI’s built-in OpenAPI/Swagger support for clarity and maintainability.
+- Avoid deeply nested routes; keep paths simple and logical.
+- Apply authentication and authorization where necessary to protect sensitive endpoints.
+- Group related endpoints logically (e.g., all user-related routes under /users/).
+- Use query parameters for optional filters/search, and path parameters for required identifiers.
+- Return standardized responses (JSON objects) with clear status codes (200, 201, 404, 422, etc.).
