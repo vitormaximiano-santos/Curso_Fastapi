@@ -1,0 +1,67 @@
+CONFIGURING ALEMBIC FOR MIGRATIONS IN FASTAPI PROJECTS
+
+1. Purpose
+- Alembic is a lightweight migration tool for SQLAlchemy.
+- It manages database schema changes over time in a controlled, versioned manner.
+- Configuration ensures Alembic knows how to connect to your database and track changes.
+
+2. Installation
+- Install Alembic via pip:
+  $ pip install alembic
+
+3. Initialization
+- Initialize Alembic in your project:
+  $ alembic init alembic
+- This creates:
+  * alembic.ini → main configuration file.
+  * alembic/ → migration environment folder.
+    - env.py → defines database connection and metadata.
+    - versions/ → stores migration scripts.
+
+4. Configuration Steps
+- Edit alembic.ini:
+  * Set sqlalchemy.url to your database connection string.
+    Example: sqlalchemy.url = postgresql://user:password@localhost/dbname
+- Edit alembic/env.py:
+  * Import your SQLAlchemy Base metadata.
+  * Configure the run_migrations_online() function to use your database engine.
+  * Example:
+    from app.database import engine, Base
+    target_metadata = Base.metadata
+
+5. Creating Migrations
+- Generate a new migration script:
+  $ alembic revision --autogenerate -m "Initial migration"
+- Apply the migration:
+  $ alembic upgrade head
+- Roll back if needed:
+  $ alembic downgrade -1
+
+6. Example Project Structure
+project/
+│
+├── app/
+│   ├── main.py
+│   ├── database/
+│   │   ├── connection.py
+│   │   └── models.py
+│   └── routers/
+│       └── users.py
+├── alembic/
+│   ├── env.py
+│   └── versions/
+└── alembic.ini
+
+7. Summary
+- Alembic must be configured with your database connection and metadata.
+- Migration scripts are stored in the versions/ folder.
+- Autogenerate creates migration files based on model changes.
+- Upgrade applies migrations; downgrade reverts them.
+
+8. Best Practices/Standards with Alembic
+- Always review autogenerate scripts before applying.
+- Keep alembic.ini and env.py under version control.
+- Use descriptive migration messages (e.g., "Add orders table").
+- Apply migrations consistently across all environments.
+- Document schema changes for clarity.
+- Test migrations locally before deploying to production.

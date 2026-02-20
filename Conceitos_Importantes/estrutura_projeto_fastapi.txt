@@ -1,0 +1,64 @@
+FASTAPI PROJECT STRUCTURE
+
+project/
+│
+├── app/                        # Main application package
+│   ├── __init__.py             # Marks this directory as a Python package
+│   ├── main.py                 # Entry point of the application (FastAPI instance)
+│   ├── routers/                # Routers for different domains
+│   │   ├── __init__.py
+│   │   ├── users.py            # User-related routes
+│   │   ├── orders.py           # Order-related routes
+│   │   └── auth.py             # Authentication routes
+│   ├── models/                 # Pydantic models and database schemas
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   └── order.py
+│   ├── services/               # Business logic and reusable functions
+│   │   ├── __init__.py
+│   │   ├── user_service.py
+│   │   └── order_service.py
+│   ├── database/               # Database configuration and ORM setup
+│   │   ├── __init__.py
+│   │   └── connection.py
+│   ├── core/                   # Core settings and utilities
+│   │   ├── __init__.py
+│   │   ├── config.py           # Environment variables, app settings
+│   │   └── security.py         # Authentication, JWT, password hashing
+│   └── middleware/             # Custom middleware
+│       ├── __init__.py
+│       └── logging.py
+│
+├── tests/                      # Unit and integration tests
+│   ├── __init__.py
+│   ├── test_users.py
+│   └── test_orders.py
+│
+├── requirements.txt            # Python dependencies
+├── README.md                   # Project documentation
+└── .env                        # Environment variables (not committed to VCS)
+
+
+Explanation
+main.py → creates the FastAPI app, includes routers, configures middleware.
+routers/ → organizes endpoints by domain (users, orders, auth).
+models/ → defines Pydantic models for request/response validation and database schemas.
+services/ → contains business logic, keeping routes clean.
+database/ → manages database connection and ORM (SQLAlchemy, Tortoise, etc.).
+core/ → holds configuration, security, and utility functions.
+middleware/ → custom middleware (logging, error handling, CORS).
+tests/ → ensures code quality with unit/integration tests.
+requirements.txt → lists dependencies.
+.env → stores environment variables securely.
+
+
+Best Practices/Standards with Project Structure
+- Keep main.py minimal: only app creation and router inclusion.
+- Use APIRouter to modularize routes by domain.
+- Separate business logic into services/ to avoid bloated route handlers.
+- Store sensitive settings in .env and load them via config.py.
+- Use models/ for validation with Pydantic and database schemas.
+- Write tests in tests/ to ensure reliability and maintainability.
+- Document the project in README.md for clarity.
+- Follow consistent naming conventions (plural for routers, singular for models).
+- Avoid mixing concerns: routes handle requests, services handle logic, models handle data.

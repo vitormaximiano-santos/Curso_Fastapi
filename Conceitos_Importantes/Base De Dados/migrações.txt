@@ -1,0 +1,49 @@
+DATABASE MIGRATIONS IN FASTAPI PROJECTS
+
+1. Purpose of Migrations
+- Migrations are version-controlled scripts that manage changes to the database schema.
+- They allow developers to safely add, remove, or modify tables and columns without losing data.
+- Ensure that all environments (development, testing, production) remain consistent.
+- Prevent errors caused by mismatched database schemas across different team members or servers.
+
+2. Why Migrations Are Useful
+- Schema Evolution: Applications grow and require new fields or tables; migrations handle these changes.
+- Team Collaboration: Keeps everyone’s database schema synchronized.
+- Safety: Avoids the risks of running raw SQL ALTER statements directly in production.
+- Rollback: Provides the ability to undo changes if something goes wrong.
+- Automation: Streamlines database updates during deployment.
+
+3. Tools Commonly Used
+- Alembic: The most popular migration tool for SQLAlchemy, widely used with FastAPI.
+- SQLModel + Alembic: Combines Pydantic-style models with SQLAlchemy migrations.
+- Other ORMs: Tortoise ORM, Django ORM (with built-in migration systems).
+
+4. Example Workflow with Alembic
+- Initialize Alembic in the project:
+  $ alembic init alembic
+- Create a new migration script:
+  $ alembic revision --autogenerate -m "Add orders table"
+- Apply the migration:
+  $ alembic upgrade head
+- Roll back if needed:
+  $ alembic downgrade -1
+
+Explanation:
+- alembic init → sets up migration environment.
+- alembic revision → generates a migration file based on model changes.
+- alembic upgrade → applies the migration to the database.
+- alembic downgrade → reverts the last migration.
+
+5. Summary
+- Migrations are essential for maintaining database integrity as applications evolve.
+- They provide a controlled, versioned way to update schemas.
+- They reduce risk and improve collaboration in team-based projects.
+
+6. Best Practices/Standards with Migrations
+- Always use migrations instead of manual SQL changes in production.
+- Write clear migration messages (e.g., "Add orders table" instead of "Update").
+- Test migrations locally before applying them in production.
+- Keep migration files under version control (Git).
+- Use autogenerate carefully; review scripts before applying.
+- Apply migrations consistently across all environments.
+- Document schema changes for future reference.

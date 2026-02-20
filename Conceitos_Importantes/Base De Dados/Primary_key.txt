@@ -1,0 +1,48 @@
+PRIMARY KEYS IN DATABASES
+
+1. Purpose of Primary Keys
+- A primary key is a column (or set of columns) that uniquely identifies each record in a table.
+- Ensures that no two rows can have the same value for the primary key.
+- Provides a reliable way to reference and retrieve specific records.
+- Acts as the foundation for relationships between tables (foreign keys often point to primary keys).
+- Enforces entity integrity, guaranteeing that each record is distinct.
+
+2. Usefulness of Primary Keys
+- Uniqueness: Prevents duplicate records in a table.
+- Data Integrity: Ensures every row can be identified without ambiguity.
+- Indexing: Primary keys are automatically indexed, improving query performance.
+- Relationships: Serves as the target for foreign keys, enabling relational connections.
+- Organization: Makes database design logical and structured.
+
+3. Example with SQLAlchemy
+
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+
+Explanation:
+- id = Column(Integer, primary_key=True) → defines "id" as the primary key.
+- Each user record must have a unique id.
+- username and email are additional fields, but id is the guaranteed unique identifier.
+
+4. Summary
+- Primary keys are essential for uniquely identifying records in relational databases.
+- They prevent duplication and maintain data integrity.
+- They improve query performance through automatic indexing.
+- They serve as the backbone for relationships with other tables.
+
+5. Best Practices/Standards with Primary Keys
+- Always define a primary key for every table.
+- Use simple, single-column primary keys when possible (e.g., id).
+- Prefer integer or UUID primary keys for efficiency and scalability.
+- Avoid using mutable fields (like email or username) as primary keys.
+- Combine primary keys with foreign keys to enforce relational integrity.
+- Document primary key usage clearly in database design.
+- Use auto-increment or UUID generation to ensure uniqueness without manual effort.

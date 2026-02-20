@@ -1,0 +1,77 @@
+PRACTICAL GUIDE – ALEMBIC COMMANDS
+--------------------------------
+
+1. Alembic Initialization
+   Command:
+   alembic init alembic
+   Function:
+   - Creates the initial directory and file structure for Alembic.
+   - Generates the alembic.ini file and the "alembic" folder with migration scripts.
+
+2. Create a New Revision (Migration)
+   Command:
+   alembic revision -m "migration message"
+   Function:
+   - Creates a new migration file inside alembic/versions.
+   - The message helps identify the change (e.g., "create users table").
+
+   With autogenerate:
+   alembic revision --autogenerate -m "message"
+   - Automatically generates changes based on the models defined in models.py.
+   - Useful for creating migrations without writing them manually.
+
+3. Apply Migrations (Upgrade)
+   Command:
+   alembic upgrade head
+   Function:
+   - Applies all pending migrations up to the latest version ("head").
+   - Updates the database according to the models.
+
+   Specific example:
+   alembic upgrade <revision_id>
+   - Applies migrations up to the indicated revision.
+
+4. Revert Migrations (Downgrade)
+   Command:
+   alembic downgrade -1
+   Function:
+   - Reverts the last applied migration.
+   - Useful for undoing recent changes.
+
+   Specific example:
+   alembic downgrade <revision_id>
+   - Reverts the database to the indicated revision.
+
+5. View Migration History
+   Command:
+   alembic history
+   Function:
+   - Lists all created revisions.
+   - Shows the chronological order of migrations.
+
+6. View Current Database Version
+   Command:
+   alembic current
+   Function:
+   - Displays which revision is currently applied to the database.
+
+7. Manually Mark Version
+   Command:
+   alembic stamp head
+   Function:
+   - Marks the database as updated to the latest version without applying migrations.
+   - Useful in cases of manual synchronization.
+
+--------------------------------
+Summary:
+- init → creates initial structure
+- revision → creates new migration
+- upgrade → applies migrations
+- downgrade → reverts migrations
+- history → shows migration history
+- current → shows current version
+- stamp → manually marks version
+
+Note:
+- Always check if the models.py file is updated before running `revision --autogenerate`.
+- The database used in this course is SQLite, but the commands also work for other databases (PostgreSQL, MySQL, etc.).

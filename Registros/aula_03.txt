@@ -1,0 +1,71 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 03: Integração com Banco de Dados (SQLAlchemy + Alembic)
+Link: https://youtu.be/5k0ko2e_pso?list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq
+
+--------------------------------
+Arquivo: models.py
+Local: C:\Users\Vitor\Desktop\Curso_Fastapi\models.py
+
+Funcionalidade:
+- Criação das classes que representam tabelas no banco de dados SQLite.
+- Uso do SQLAlchemy ORM para mapear objetos Python em tabelas relacionais.
+
+Principais pontos:
+- Conexão com banco SQLite: `db = create_engine('sqlite:///banco.db')`
+- Base declarativa: `Base = declarative_base()`
+- Classe Usuario:
+  - Tabela "usuarios"
+  - Campos: id, nome, email, senha, ativo, admin
+  - Construtor para inicializar objetos de usuário
+- Classe Pedido:
+  - Tabela "pedidos"
+  - Campos: id, status, usuario (chave estrangeira), preco
+  - Construtor para inicializar pedidos com status padrão "Pendente"
+- Classe ItemPedido:
+  - Tabela "itenspedidos"
+  - Campos: id, quantidade, sabor, tamanho, preco_unitario, pedido (chave estrangeira)
+
+Observação:
+- Uso de `ForeignKey` para relacionar tabelas (Pedido → Usuario, ItemPedido → Pedido).
+- Estrutura pronta para representar usuários, pedidos e itens de pedidos.
+
+--------------------------------
+Arquivo: alembic.ini
+Local: C:\Users\Vitor\Desktop\Curso_Fastapi\alembic.ini
+
+Funcionalidade:
+- Arquivo de configuração do Alembic (ferramenta de migração de banco de dados).
+- Define parâmetros para geração e controle de versões de migrações.
+
+Principais pontos:
+- `script_location = %(here)s/alembic` → local dos scripts de migração.
+- `sqlalchemy.url = sqlite:///banco.db` → URL do banco de dados usado.
+- Configurações de loggers, handlers e formatters para acompanhar execução das migrações.
+
+--------------------------------
+Arquivo: alembic\env.py
+Local: C:\Users\Vitor\Desktop\Curso_Fastapi\alembic\env.py
+
+Funcionalidade:
+- Script principal do Alembic para rodar migrações.
+- Conecta ao banco e aplica mudanças de acordo com os modelos definidos.
+
+Principais pontos:
+- Importa `Base` do arquivo models.py para usar metadados das tabelas.
+- Funções:
+  - `run_migrations_offline()` → executa migrações sem conexão ativa (gera scripts).
+  - `run_migrations_online()` → executa migrações com conexão ativa ao banco.
+- Configuração para interpretar `alembic.ini` e aplicar migrações conforme necessário.
+
+--------------------------------
+Resumo da Aula 03:
+- Introdução ao uso do SQLAlchemy para modelagem de tabelas e relacionamentos.
+- Criação de classes que representam usuários, pedidos e itens de pedidos.
+- Configuração inicial do Alembic para gerenciar migrações do banco de dados.
+- Estrutura pronta para evoluir o banco conforme o projeto cresce.
+
+Observações importantes:
+- SQLAlchemy ORM permite trabalhar com tabelas como objetos Python.
+- Alembic é usado para versionar e aplicar mudanças no banco de forma controlada.
+- O banco utilizado é SQLite, simples e prático para desenvolvimento.

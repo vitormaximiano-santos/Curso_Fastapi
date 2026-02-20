@@ -1,0 +1,43 @@
+FOREIGN KEYS IN DATABASES
+
+1. Purpose of Foreign Keys
+- A foreign key is a column (or set of columns) in one table that refers to the primary key in another table.
+- It establishes a relationship between two tables, ensuring that data remains consistent and connected.
+- Prevents invalid data by enforcing referential integrity (e.g., you cannot insert an order with a non-existent user_id).
+- Helps organize complex systems where data is spread across multiple tables.
+
+2. Usefulness of Foreign Keys
+- Data Integrity: Ensures that relationships between tables are valid (no orphan records).
+- Referential Consistency: Keeps related data aligned across tables.
+- Simplified Queries: Enables JOIN operations to combine data from multiple tables.
+- Logical Structure: Makes database design more understandable and maintainable.
+- Prevents Errors: Stops accidental deletion or insertion of inconsistent data.
+
+3. Example with SQLAlchemy
+
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+
+class Order(Base):
+    __tablename__ = "orders"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    description = Column(String)
+
+    user = relationship("User")
+
+Explanation:
+- ForeignKey("users.id") → ensures that every order must be linked to a valid user.
+- relationship("User") → allows easy access to the related user object in Python code.
+- This prevents inserting an order with a user_id that does not exist in the users table.
+
+4. Summary
+- Foreign keys are essential for linking tables

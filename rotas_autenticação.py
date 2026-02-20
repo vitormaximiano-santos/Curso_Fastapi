@@ -10,4 +10,7 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 @auth_router.get("/")
 async def autenticacao(): # usa async def para registrar a função que será executada quando a rota for acessada
+    """
+    Essa é a rota padrão de autenticação do sistema
+    """
     return {"Mensagem": "Voçe acessou a rota /auth/, e esta em autenticação"}

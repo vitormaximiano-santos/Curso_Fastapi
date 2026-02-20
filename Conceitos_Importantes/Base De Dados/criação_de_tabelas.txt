@@ -1,0 +1,71 @@
+CREATING CLASSES AND TABLES FOR DATABASES
+
+1. Purpose
+- Classes in Python (with ORM libraries like SQLAlchemy or SQLModel) represent database tables.
+- Each class maps to a table, and each attribute maps to a column.
+- This structure allows developers to interact with the database using Python objects instead of raw SQL.
+
+2. Basic Structure with SQLAlchemy
+
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+
+class Order(Base):
+    __tablename__ = "orders"
+    id = Column(Integer, primary_key=True, index=True)
+    description = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User")
+
+Explanation:
+- Base = declarative_base() → creates a base class for ORM models.
+- __tablename__ → defines the name of the table in the database.
+- Column(...) → defines a column with type and rules.
+- primary_key=True → marks the column as the primary key.
+- unique=True → ensures no duplicate values in that column.
+- index=True → creates an index to improve query performance.
+- ForeignKey("users.id") → links the order table to the user table.
+- relationship("User") → allows navigation between related tables.
+
+3. Parameters and Rules
+- Column Types: Integer, String, Boolean, DateTime, Float, etc.
+- Constraints:
+  * primary_key → ensures uniqueness and identification.
+  * unique → prevents duplicate values.
+  * nullable → defines whether a column can be empty.
+  * default → sets a default value if none is provided.
+- Relationships:
+  * One-to-Many → one user can have many orders.
+  * Many-to-Many → requires an association table.
+  * One-to-One → unique relationship between two tables.
+
+4. Structure
+- Each table should have a primary key.
+- Foreign keys define relationships between tables.
+- Indexes improve performance for frequently queried columns.
+- Use meaningful names for tables and columns.
+
+5. Summary
+- Classes map directly to tables in the database.
+- Columns define the structure and rules for data storage.
+- Relationships connect tables logically.
+- This approach ensures data integrity, consistency, and scalability.
+
+6. Best Practices/Standards with Class/Table Creation
+- Always define a primary key for each table.
+- Use clear and descriptive names for tables and columns.
+- Separate ORM models (database tables) from Pydantic models (validation).
+- Apply constraints (unique, nullable, default) to enforce business rules.
+- Use relationships to model real-world connections between entities.
+- Document table structures for clarity and maintainability.
+- Keep database logic modular (e.g., in a database/ folder).
+- Use migrations (Alembic) to manage schema changes safely.
+- Test table creation and relationships with sample data before production.

@@ -1,0 +1,53 @@
+DATABASES IN FASTAPI PROJECTS
+
+1. Purpose of Using a Database
+- Provides persistent storage for application data (users, orders, products, etc.).
+- Allows retrieval, update, and deletion of information across multiple sessions.
+- Ensures data consistency and integrity in multi-user environments.
+- Enables complex queries, filtering, and reporting.
+- Supports scalability as the application grows.
+
+2. Types of Databases Commonly Used
+- SQL (Relational Databases): PostgreSQL, MySQL, SQLite, Oracle, SQL Server.
+- NoSQL Databases: MongoDB, Redis, Cassandra.
+- FastAPI is flexible: it does not enforce a specific database, allowing integration with any library or ORM.
+
+3. Integration with FastAPI
+- Use ORMs (Object Relational Mappers) like SQLAlchemy or SQLModel to map database tables to Python classes.
+- Pydantic models validate request/response data, while ORM models handle persistence.
+- Database connections are typically managed in a dedicated module (e.g., database/connection.py).
+- Dependency injection in FastAPI makes it easy to provide database sessions to endpoints.
+
+4. Example with SQLAlchemy
+
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+
+Explanation:
+- declarative_base() → creates a base class for ORM models.
+- class User(Base) → defines a table named "users".
+- id, username, email → columns in the table with types and constraints.
+
+5. Summary
+- Databases are essential for storing and managing application data.
+- FastAPI integrates seamlessly with both SQL and NoSQL databases.
+- ORMs simplify database operations by allowing developers to work with Python objects instead of raw SQL.
+
+6. Best Practices/Standards with Databases in FastAPI
+- Use SQLModel or SQLAlchemy for relational databases; they integrate well with FastAPI.
+- Keep database connection logic in a dedicated module for clarity.
+- Separate Pydantic models (validation) from ORM models (persistence).
+- Use migrations (e.g., Alembic) to manage schema changes safely.
+- Apply indexing and constraints to improve performance and ensure data integrity.
+- Handle database sessions with dependency injection to avoid leaks.
+- Store credentials and connection strings securely in environment variables (.env).
+- Test database operations with unit and integration tests.
+- Choose the database type (SQL vs NoSQL) based on project requirements (structured vs flexible data).

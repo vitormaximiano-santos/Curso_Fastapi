@@ -1,23 +1,21 @@
 Bibliotecas do curso FastAPI - Hashtag Treinamentos
 
 ===========================
-🔒 Segurança e Criptografia
+Segurança e Criptografia
 ===========================
 
 bcrypt
 Propósito: Hash de senhas
 Utilidade: Criptografar senhas de forma segura.
-Termo-chave: "hash" significa transformar dados (como senhas) em uma sequência irreversível, usada para autenticação.
+Termo-chave: "hash" = transformação irreversível usada para autenticação.
 
 cryptography
 Propósito: Criptografia geral
 Utilidade: Implementa algoritmos de segurança (AES, RSA, etc.).
-Termo-chave: "AES" e "RSA" são algoritmos de criptografia usados para proteger dados.
 
 ecdsa
 Propósito: Assinaturas digitais
 Utilidade: Criptografia baseada em curvas elípticas.
-Termo-chave: "assinatura digital" é uma forma de garantir autenticidade e integridade de mensagens.
 
 passlib
 Propósito: Hash de senhas
@@ -26,7 +24,6 @@ Utilidade: Biblioteca robusta para gerenciamento de senhas.
 pyasn1
 Propósito: ASN.1
 Utilidade: Manipulação de estruturas de dados criptográficas.
-Termo-chave: "ASN.1" é um padrão para representar dados em sistemas de segurança.
 
 rsa
 Propósito: Criptografia RSA
@@ -35,21 +32,18 @@ Utilidade: Implementa algoritmo RSA para chaves e assinaturas.
 python-jose
 Propósito: JWT e criptografia
 Utilidade: Implementa JSON Web Tokens e algoritmos JOSE.
-Termo-chave: "JWT" (JSON Web Token) é usado para autenticação em APIs.
 
 ===========================
-🌐 Web e Servidor
+Web e Servidor
 ===========================
 
 fastapi
 Propósito: Framework web
 Utilidade: Framework moderno e rápido para APIs em Python.
-Termo-chave: "API" é uma interface que permite comunicação entre sistemas.
 
 starlette
 Propósito: Framework ASGI
 Utilidade: Base do FastAPI, fornece roteamento e middlewares.
-Termo-chave: "ASGI" é um padrão para aplicações assíncronas em Python.
 
 uvicorn
 Propósito: Servidor ASGI
@@ -58,27 +52,33 @@ Utilidade: Servidor rápido para rodar aplicações FastAPI.
 h11
 Propósito: HTTP/1.1
 Utilidade: Implementação pura de HTTP/1.1 usada pelo Uvicorn.
-Termo-chave: "HTTP" é o protocolo usado para comunicação na web.
 
 python-multipart
 Propósito: Upload de arquivos
-Utilidade: Suporte para multipart/form-data (upload).
+Utilidade: Suporte para multipart/form-data.
 
 idna
 Propósito: Domínios internacionais
 Utilidade: Suporte a nomes de domínio com caracteres especiais.
 
 ===========================
-🗄️ Banco de Dados
+Banco de Dados
 ===========================
 
 SQLAlchemy
 Propósito: ORM
-Utilidade: Manipulação de bancos de dados relacionais.
-Termo-chave: "ORM" (Object Relational Mapper) permite trabalhar com tabelas de banco de dados usando objetos Python.
+Utilidade: Manipulação de bancos relacionais.
+
+SQLAlchemy-Utils
+Propósito: Extensões para SQLAlchemy
+Utilidade: Tipos adicionais e utilidades.
+
+Alembic
+Propósito: Migrações de banco de dados
+Utilidade: Gerenciar versões e alterações de esquema.
 
 ===========================
-📊 Validação e Tipagem
+Validação e Tipagem
 ===========================
 
 pydantic
@@ -87,33 +87,31 @@ Utilidade: Valida e serializa dados com base em modelos.
 
 pydantic_core
 Propósito: Núcleo do Pydantic
-Utilidade: Motor interno de validação de dados.
+Utilidade: Motor interno de validação.
 
 annotated-types
 Propósito: Tipagem avançada
-Utilidade: Criação de tipos anotados para validações mais precisas.
+Utilidade: Criação de tipos anotados para validações precisas.
 
 typing-inspection
 Propósito: Tipagem
-Utilidade: Ferramentas para inspecionar tipos em tempo de execução.
+Utilidade: Inspecionar tipos em tempo de execução.
 
 typing_extensions
 Propósito: Tipos extras
 Utilidade: Tipos novos para versões antigas do Python.
 
 ===========================
-⚙️ Utilidades e Ferramentas
+Utilidades e Ferramentas
 ===========================
 
 anyio
 Propósito: Concorrência assíncrona
-Utilidade: Abstrai asyncio, trio e curio para lidar com tarefas assíncronas.
-Termo-chave: "concorrência" significa executar várias tarefas ao mesmo tempo.
+Utilidade: Abstrai asyncio, trio e curio.
 
 greenlet
 Propósito: Corrotinas leves
 Utilidade: Suporte para multitarefa cooperativa.
-Termo-chave: "corrotina" é uma função que pode pausar e retomar sua execução.
 
 sniffio
 Propósito: Detecção de loop assíncrono
@@ -130,7 +128,6 @@ Utilidade: Necessário para bibliotecas que usam CFFI.
 click
 Propósito: CLI
 Utilidade: Facilita criação de comandos de terminal.
-Termo-chave: "CLI" (Command Line Interface) é a interface de texto usada no terminal.
 
 colorama
 Propósito: Cores no terminal
@@ -139,50 +136,91 @@ Utilidade: Adiciona cores e estilos em saídas de console.
 python-dotenv
 Propósito: Variáveis de ambiente
 Utilidade: Carrega configurações de arquivos .env.
-Termo-chave: ".env" é um arquivo usado para armazenar configurações como senhas e chaves secretas.
 
 six
 Propósito: Compatibilidade
 Utilidade: Suporte entre Python 2 e 3.
 
------------------------------------------------------------------------
+Mako
+Propósito: Templates
+Utilidade: Sistema de templates usado pelo Alembic.
 
-📌 FastAPI - Mapa Mental de Bibliotecas
+MarkupSafe
+Propósito: Segurança em templates
+Utilidade: Escapa caracteres perigosos em HTML/Jinja/Mako.
 
-1. Segurança e Criptografia
-   ├── bcrypt → hash de senhas
-   ├── passlib → gerenciamento de senhas
-   ├── cryptography → algoritmos de segurança (AES, RSA)
-   ├── ecdsa → assinaturas digitais com curvas elípticas
-   ├── rsa → criptografia RSA
-   ├── pyasn1 → estruturas criptográficas (ASN.1)
-   └── python-jose → JWT (tokens de autenticação)
+Mapa Mental de Bibliotecas - FastAPI
 
-2. Web e Servidor
-   ├── fastapi → framework principal para APIs
-   ├── starlette → base ASGI (roteamento, middlewares)
-   ├── uvicorn → servidor ASGI rápido
-   ├── h11 → protocolo HTTP/1.1
-   ├── python-multipart → suporte a upload de arquivos
-   └── idna → suporte a domínios internacionais
+Segurança e Criptografia
 
-3. Banco de Dados
-   └── SQLAlchemy → ORM para manipulação de bancos relacionais
+bcrypt → hash de senhas
 
-4. Validação e Tipagem
-   ├── pydantic → validação e serialização de dados
-   ├── pydantic_core → núcleo de validação
-   ├── annotated-types → tipos anotados para validações
-   ├── typing-inspection → inspeção de tipos em tempo de execução
-   └── typing_extensions → tipos extras para versões antigas do Python
+passlib → gerenciamento de senhas
 
-5. Utilidades e Ferramentas
-   ├── anyio → concorrência assíncrona
-   ├── greenlet → corrotinas leves
-   ├── sniffio → detecção de loop assíncrono
-   ├── cffi → interface com código C
-   ├── pycparser → parser de código C
-   ├── click → criação de comandos de terminal (CLI)
-   ├── colorama → cores no terminal
-   ├── python-dotenv → variáveis de ambiente (.env)
-   └── six → compatibilidade entre Python 2 e 3
+cryptography → algoritmos de segurança (AES, RSA)
+
+ecdsa → assinaturas digitais
+
+rsa → criptografia RSA
+
+pyasn1 → estruturas criptográficas (ASN.1)
+
+python-jose → JWT (tokens de autenticação)
+
+Web e Servidor
+
+fastapi → framework principal
+
+starlette → base ASGI
+
+uvicorn → servidor ASGI
+
+h11 → protocolo HTTP/1.1
+
+python-multipart → upload de arquivos
+
+idna → suporte a domínios internacionais
+
+Banco de Dados
+
+SQLAlchemy → ORM
+
+SQLAlchemy-Utils → extensões para SQLAlchemy
+
+Alembic → migrações de banco de dados
+
+Validação e Tipagem
+
+pydantic → validação de dados
+
+pydantic_core → núcleo de validação
+
+annotated-types → tipos anotados
+
+typing-inspection → inspeção de tipos
+
+typing_extensions → tipos extras
+
+Utilidades e Ferramentas
+
+anyio → concorrência assíncrona
+
+greenlet → corrotinas leves
+
+sniffio → detecção de loop assíncrono
+
+cffi → interface com código C
+
+pycparser → parser de código C
+
+click → comandos de terminal (CLI)
+
+colorama → cores no terminal
+
+python-dotenv → variáveis de ambiente
+
+six → compatibilidade Python 2/3
+
+Mako → templates (Alembic)
+
+MarkupSafe → segurança em templates

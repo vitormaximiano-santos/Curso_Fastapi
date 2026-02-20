@@ -1,0 +1,46 @@
+MAIN.PY IN FASTAPI PROJECTS
+
+1. Purpose of main.py
+- Acts as the entry point of the FastAPI application.
+- Creates the FastAPI instance (app = FastAPI()).
+- Registers routers, endpoints, and middleware.
+- Defines global configurations such as metadata, exception handlers, and startup/shutdown events.
+- Serves as the reference for Uvicorn or Gunicorn when starting the server (uvicorn main:app --reload).
+
+2. Typical Structure of main.py
+
+from fastapi import FastAPI
+from routers import users, orders
+
+# Create the FastAPI application
+app = FastAPI(title="My API Project", version="1.0.0")
+
+# Include routers
+app.include_router(users.router)
+app.include_router(orders.router)
+
+# Root endpoint
+@app.get("/")
+async def root():
+    return {"message": "Welcome to my FastAPI project"}
+
+Explanation:
+- from fastapi import FastAPI → imports the FastAPI class.
+- app = FastAPI(...) → creates the application instance with metadata.
+- app.include_router(...) → registers routers from other modules.
+- @app.get("/") → defines a simple root endpoint.
+- async def root(): → function executed when accessing the root path.
+
+3. Summary
+- main.py is the central file that ties together all parts of a FastAPI project.
+- It should remain minimal, focusing on application setup and router inclusion.
+- Business logic and detailed routes should be placed in separate modules.
+
+4. Best Practices/Standards with main.py
+- Keep main.py clean and minimal; avoid placing business logic directly inside.
+- Use APIRouter in separate files to organize routes by domain (e.g., users, orders).
+- Configure middleware (CORS, logging, security) in main.py if needed.
+- Use descriptive metadata (title, description, version) in FastAPI() for better documentation.
+- Ensure main.py is the single entry point for running the server with Uvicorn/Gunicorn.
+- For larger projects, place main.py inside an app/ directory and use __init__.py for package organization.
+- Document endpoints automatically using FastAPI’s built-in OpenAPI/Swagger support.
