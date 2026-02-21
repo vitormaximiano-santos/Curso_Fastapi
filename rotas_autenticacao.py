@@ -2,8 +2,12 @@ from fastapi import APIRouter,HTTPException ,Depends # Depends é uma função q
 from models import Usuario
 from dependencies import pegar_sessao
 from main import bcript_context
-from schemas import schema_usuario
+from schemas import SchemaUsuario, SchemaLogin
 from sqlalchemy.orm import Session
+
+def criar_token(id_usuario):
+    token = f"awifs2jde23j2dka{id_usuario}"
+    return token
 
 # rotas para autenticação
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
@@ -21,16 +25,27 @@ async def home(): # usa async def para registrar a função que será executada 
     return {"Mensagem": "Voçe acessou a rota /auth/, e esta em autenticação"}
 
 @auth_router.post("/Criar_Conta")
-async def criar_conta(schema_usuario: schema_usuario, session:Session = Depends(pegar_sessao)):
+async def criar_conta(Schema_Usuario: SchemaUsuario, session:Session = Depends(pegar_sessao)):
     # Verifica se já existe usuário com o mesmo email
-    usuario = session.query(Usuario).filter(Usuario.email == schema_usuario.email).first()
+    usuario = session.query(Usuario).filter(Usuario.email == SchemaUsuario.email).first()
     if usuario:
         raise HTTPException(status_code=400, detail="Usuário já existe")
     else:   
         # Criptografa a senha
-        senha_criptada = bcript_context.hash(schema_usuario.senha)
+        senha_criptada = bcript_context.hash(SchemaUsuario.senha)
         # Cria novo usuário (ajustando ordem dos parâmetros)
-        novo_usuario = Usuario(schema_usuario.nome, schema_usuario.email, senha_criptada, schema_usuario.ativo, schema_usuario.admin)
+        novo_usuario = Usuario(SchemaUsuario.nome, SchemaUsuario.email, senha_criptada, SchemaUsuario.ativo, SchemaUsuario.admin)
         session.add(novo_usuario)
         session.commit()
-        return {"mensagem": f"Conta criada com sucesso: {schema_usuario.email}"}
+        return {"mensagem": f"Conta criada com sucesso: {SchemaUsuario.email}"}
+
+@auth_router.post("/Login")
+async def login(Schema_Login: SchemaLogin, session:Session = Depends(pegar_sessao)):
+    usuario = session.query(Usuario).filter(Usuario.email == Schema_Login.email).first() # Verifica se já existe usuário com o mesmo email
+    if not Usuario:
+       raise HTTPException(status_code=400, detail="Usuário não encontrado")
+    else:
+      access_token = criar_token(Usuario.id)
+      return {"access_token": access_token,
+              "token_type": "bearer",
+             }

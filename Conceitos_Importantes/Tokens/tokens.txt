@@ -1,0 +1,63 @@
+TOKENS (JWT) IN FASTAPI PROJECTS
+
+1. What is a JWT?
+- JWT stands for JSON Web Token.
+- It is a compact, URL-safe string that represents claims between two parties.
+- Structure: Header + Payload + Signature.
+- Example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+- JWTs are not encrypted, but they are signed to ensure authenticity.
+
+2. Purpose of JWT
+- Authentication: Proves the identity of a user.
+- Authorization: Grants access to protected routes/resources.
+- Stateless: The server does not need to store session data; the token carries the information.
+
+3. Why JWT is Useful
+- Scalability: Works well in distributed systems (no central session store).
+- Security: Signed with a secret key or private key to prevent tampering.
+- Flexibility: Can include custom claims (e.g., user role, expiration time).
+- Integration: Widely supported across frameworks and languages.
+
+4. Structure of a JWT
+- Header: Specifies algorithm and token type (e.g., HS256).
+- Payload: Contains claims (e.g., user ID, role, expiration).
+- Signature: Ensures the token was issued by the server and not altered.
+
+5. Example in FastAPI
+
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+
+SECRET_KEY = "mysecretkey"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None
+
+Explanation:
+- create_access_token → generates a JWT with expiration.
+- verify_token → decodes and validates the token.
+
+6. Summary
+- JWTs are digital passports for APIs.
+- They allow stateless authentication and authorization.
+- They are signed, not encrypted, so sensitive data should not be stored inside.
+
+7. Best Practices/Standards with JWT
+- Always set an expiration time (`exp` claim).
+- Store only necessary information (avoid sensitive data).
+- Use strong secret keys or private/public key pairs.
+- Rotate keys periodically for security.
+- Validate tokens on every request to protected routes.
+- Combine JWT with HTTPS to prevent interception.

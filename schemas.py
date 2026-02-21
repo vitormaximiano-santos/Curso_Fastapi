@@ -2,7 +2,7 @@ from pydantic import BaseModel # BaseModel é uma classe que herda de pydantic.B
 
 from typing import Optional
 
-class schema_usuario(BaseModel): # cria um modelo de dados para usuários "BaseModel" é uma classe que herda de pydantic.BaseModel
+class SchemaUsuario(BaseModel): # cria um modelo de dados para usuários "BaseModel" é uma classe que herda de pydantic.BaseModel
     
     nome : str
     email : str
@@ -12,3 +12,17 @@ class schema_usuario(BaseModel): # cria um modelo de dados para usuários "BaseM
 
     class Config:
         from_attributes = True # permite que o pydantic use os atributos do modelo como nomes de campos
+        
+class SchemaPedido(BaseModel): #
+    usuario : int # tipo de dado: int
+    
+    class Config:
+        from_attributes = True
+    
+class SchemaLogin(BaseModel):
+    email: str
+    senha: str
+    
+    class Config:
+        from_attributes = True
+        

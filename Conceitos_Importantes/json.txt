@@ -1,0 +1,68 @@
+JSON IN FASTAPI PROJECTS
+
+1. What is JSON?
+- JSON stands for JavaScript Object Notation.
+- It is a lightweight data-interchange format.
+- Human-readable and easy for machines to parse and generate.
+- Commonly used in APIs to exchange data between client and server.
+
+2. Purpose of JSON
+- Provides a standard way to represent structured data.
+- Used in FastAPI for request bodies and responses.
+- Ensures compatibility across different programming languages and platforms.
+
+3. Why JSON is Useful
+- Simplicity: Easy to read and write.
+- Universality: Supported by almost all modern programming languages.
+- Efficiency: Compact format for transmitting data over the web.
+- Integration: Works seamlessly with REST APIs and modern frameworks.
+
+4. Structure of JSON
+- Data is represented as key-value pairs.
+- Supports basic types: string, number, boolean, null, array, object.
+- Example:
+{
+  "nome": "Vitor",
+  "email": "teste@gmail.com",
+  "ativo": true,
+  "roles": ["admin", "user"]
+}
+
+Explanation:
+- "nome" → string
+- "email" → string
+- "ativo" → boolean
+- "roles" → array of strings
+
+5. Example in FastAPI
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class Usuario(BaseModel):
+    nome: str
+    email: str
+    ativo: bool
+
+@app.post("/usuarios/")
+def criar_usuario(usuario: Usuario):
+    return {"msg": "Usuário criado", "dados": usuario}
+
+Explanation:
+- The request body must be JSON matching the Usuario schema.
+- FastAPI automatically parses JSON into a Pydantic model.
+- The response is returned as JSON.
+
+6. Summary
+- JSON is the backbone of communication in FastAPI APIs.
+- It ensures data is exchanged in a structured, consistent, and universal format.
+- FastAPI integrates JSON seamlessly with Pydantic for validation and serialization.
+
+7. Best Practices/Standards with JSON
+- Always validate JSON input using schemas (Pydantic).
+- Keep JSON responses consistent across endpoints.
+- Avoid sending sensitive data in JSON responses.
+- Use camelCase or snake_case consistently for keys.
+- Document JSON request/response formats in API docs.

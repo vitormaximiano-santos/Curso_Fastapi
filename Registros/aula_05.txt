@@ -1,0 +1,108 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 05: Login e Criação de Pedidos
+Link: https://youtu.be/Rv5NjQaRNJw?list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq
+
+--------------------------------
+Arquivo: main.py
+Funcionalidade:
+- Configuração principal da aplicação FastAPI.
+- Carregamento da variável SECRET_KEY do arquivo `.env`.
+- Criação de contexto de criptografia com bcrypt.
+- Inclusão dos routers de pedidos e autenticação.
+
+Código principal:
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")
+bcript_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+Observação:
+- `CryptContext` é usado para criptografar senhas.
+- `load_dotenv()` carrega variáveis do arquivo `.env`.
+
+--------------------------------
+Arquivo: rotas_autenticacao.py
+Funcionalidade:
+- Criação de rotas relacionadas à autenticação de usuários.
+- Implementação da rota de login e criação de conta.
+
+Funções principais:
+1. Função `criar_token(id_usuario)`:
+   - Gera um token simples concatenando uma string fixa com o id do usuário.
+   - Exemplo: "awifs2jde23j2dka{id_usuario}"
+
+Rotas:
+1. GET /auth/
+   - Rota padrão de autenticação.
+   - Retorna mensagem de acesso.
+
+2. POST /auth/Criar_Conta
+   - Recebe dados do usuário via `SchemaUsuario`.
+   - Verifica se já existe usuário com o mesmo email.
+   - Criptografa a senha com bcrypt.
+   - Cria novo usuário e salva no banco.
+   - Retorna mensagem de sucesso.
+
+3. POST /auth/Login
+   - Recebe dados de login via `SchemaLogin`.
+   - Verifica se o usuário existe no banco.
+   - Se não encontrado, retorna erro 400.
+   - Se encontrado, gera token de acesso com `criar_token()`.
+   - Retorna token e tipo "bearer".
+
+Observação:
+- Uso de `Depends(pegar_sessao)` para injetar sessão do banco.
+- Uso de `HTTPException` para tratar erros (ex: usuário não encontrado).
+
+--------------------------------
+Arquivo: rotas_ordem.py
+Funcionalidade:
+- Criação de rotas relacionadas a pedidos.
+
+Rotas:
+1. GET /pedidos/
+   - Rota padrão de pedidos.
+   - Retorna mensagem de acesso.
+
+2. POST /pedidos/pedido
+   - Recebe dados do pedido via `SchemaPedido`.
+   - Cria novo pedido associado a um usuário.
+   - Salva no banco e retorna mensagem de sucesso.
+
+Observação:
+- Uso de `Depends(pegar_sessao)` para injetar sessão do banco.
+- Integração com modelo Pedido do SQLAlchemy.
+
+--------------------------------
+Arquivo: schemas.py
+Funcionalidade:
+- Definição de modelos de dados com Pydantic.
+- Validação automática dos dados recebidos pela API.
+
+Classes:
+1. SchemaUsuario
+   - Campos: nome, email, senha, ativo, admin
+   - Usado para criação de conta.
+
+2. SchemaPedido
+   - Campos: usuario (int)
+   - Usado para criação de pedidos.
+
+3. SchemaLogin
+   - Campos: email, senha
+   - Usado para login de usuários.
+
+Configuração:
+- `from_attributes = True` → permite que Pydantic use atributos dos modelos SQLAlchemy.
+
+--------------------------------
+Resumo da Aula 05:
+- Implementação da rota de login com geração de token simples.
+- Criação da rota para pedidos, permitindo salvar pedidos no banco.
+- Uso de Pydantic para validação de dados de login, criação de conta e pedidos.
+- Integração entre rotas, modelos e banco de dados.
+
+Observações importantes:
+- O token gerado ainda é simples e será futuramente substituído por JWT.
+- `Depends` continua sendo usado para injeção de dependências (sessão do banco).
+- Estrutura básica de autenticação e pedidos já está funcionando.
