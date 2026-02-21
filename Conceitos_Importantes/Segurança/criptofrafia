@@ -1,0 +1,62 @@
+CRYPTOGRAPHY WITH PASSLIB.CONTEXT (CryptContext)
+
+1. Purpose of CryptContext
+- CryptContext is a configuration object provided by Passlib.
+- It defines which hashing algorithms are available for password encryption.
+- Allows easy management of password hashing, verification, and algorithm upgrades.
+- Ensures secure storage of user credentials in databases.
+
+2. Why CryptContext Is Useful
+- Flexibility: Supports multiple hashing algorithms (bcrypt, argon2, sha256_crypt, etc.).
+- Security: Provides strong, salted hashes to protect passwords.
+- Upgradability: Allows deprecating old algorithms and migrating to stronger ones.
+- Simplicity: Centralizes password hashing logic in one place.
+
+3. Basic Example
+
+from passlib.context import CryptContext
+
+# Define hashing schemes
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Hash a password
+hashed_password = pwd_context.hash("mysecretpassword")
+
+# Verify a password
+is_valid = pwd_context.verify("mysecretpassword", hashed_password)
+
+Explanation:
+- schemes=["bcrypt"] → defines bcrypt as the hashing algorithm.
+- deprecated="auto" → automatically marks weaker algorithms as deprecated.
+- pwd_context.hash → generates a secure hash of the password.
+- pwd_context.verify → checks if a plain password matches the stored hash.
+
+4. Customizing CryptContext
+
+pwd_context = CryptContext(
+    schemes=["argon2", "bcrypt"],
+    deprecated="auto"
+)
+
+Explanation:
+- Supports multiple algorithms (argon2 and bcrypt).
+- Automatically deprecates weaker algorithms.
+- Useful for transitioning from one algorithm to another.
+
+5. Integration with FastAPI
+- CryptContext is typically used in authentication workflows.
+- Example: hashing user passwords before saving them in the database.
+- Example: verifying user login attempts by comparing plain input with stored hash.
+
+6. Summary
+- CryptContext is the core tool for password hashing in Passlib.
+- It ensures secure, flexible, and maintainable authentication systems.
+- It integrates seamlessly with FastAPI for user management.
+
+7. Best Practices/Standards with CryptContext
+- Always use strong algorithms (bcrypt, argon2).
+- Store only hashed passwords, never plain text.
+- Use deprecated="auto" to migrate away from weaker algorithms.
+- Keep CryptContext configuration centralized (e.g., app/security.py).
+- Regularly review and update hashing algorithms for security.
+- Test password hashing and verification thoroughly.

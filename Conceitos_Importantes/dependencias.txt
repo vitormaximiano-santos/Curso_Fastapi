@@ -1,0 +1,67 @@
+DEPENDENCIES IN FASTAPI PROJECTS
+
+1. Purpose of Dependencies
+- Dependencies are a way to share logic across multiple routes in FastAPI.
+- They allow you to define reusable functions that can be injected into endpoints.
+- Common use cases include database sessions, authentication, configuration, and reusable utilities.
+- They simplify code by avoiding repetition and centralizing shared logic.
+
+2. Why Dependencies Are Useful
+- Reusability: Write logic once and use it in multiple routes.
+- Clean Code: Keeps route handlers focused on business logic.
+- Consistency: Ensures the same behavior across different endpoints.
+- Flexibility: Dependencies can be optional, conditional, or nested.
+- Security: Useful for authentication and authorization checks.
+
+3. Basic Example
+
+from fastapi import Depends, FastAPI
+
+app = FastAPI()
+
+def common_dependency():
+    return {"app_name": "FastAPI Project"}
+
+@app.get("/info")
+def get_info(dep: dict = Depends(common_dependency)):
+    return {"message": f"This is {dep['app_name']}"}
+
+Explanation:
+- common_dependency → defines a reusable function.
+- Depends(common_dependency) → injects the result into the route.
+- The route uses the dependency without repeating logic.
+
+4. Example with Database Session
+
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from app.database import get_db
+
+@app.get("/users")
+def read_users(db: Session = Depends(get_db)):
+    return db.query(User).all()
+
+Explanation:
+- get_db → dependency that provides a database session.
+- db: Session = Depends(get_db) → injects the session into the route.
+- The route can query the database without managing sessions manually.
+
+5. Advanced Use Cases
+- Authentication: Dependencies can check tokens or user roles.
+- Configuration: Load environment variables or settings.
+- Middleware-like Logic: Apply transformations or checks before route execution.
+- Nested Dependencies: Dependencies can depend on other dependencies.
+
+6. Summary
+- Dependencies are a powerful feature in FastAPI for code reuse and organization.
+- They make routes cleaner, safer, and easier to maintain.
+- They are essential for database management, authentication, and shared utilities.
+
+7. Best Practices/Standards with Dependencies
+- Keep dependency functions small and focused.
+- Place dependencies in a dedicated folder (e.g., app/dependencies/).
+- Use descriptive names for clarity.
+- Avoid heavy logic inside dependencies; keep them lightweight.
+- Combine dependencies with Pydantic schemas for validation.
+- Document dependencies to improve readability.
+- Test dependencies separately to ensure reliability.

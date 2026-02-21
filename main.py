@@ -1,4 +1,11 @@
 from fastapi import FastAPI
+from passlib.context import CryptContext
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # carrega variáveis do .env
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 app = FastAPI()
 
@@ -8,8 +15,10 @@ app = FastAPI()
 # "uvicorn" é o servidor que irá executar o app
 # "main:app" é o nome do app definido acima "app = FastAPI()"
 
+bcript_context = CryptContext(schemes=["bcrypt"], deprecated="auto") # cria um objeto de contexto para bcrypt, que é usado para criptografar senhas: 
+
 from rotas_ordem import order_router
-from rotas_autenticação import auth_router
+from rotas_autenticacao import auth_router
 
 from fastapi import FastAPI
 from rotas_ordem import order_router   # importa o router

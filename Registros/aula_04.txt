@@ -1,0 +1,104 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 04: Autenticação e Criação de Usuários
+Link: https://youtu.be/GmigfELFbn4?list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq
+
+--------------------------------
+Arquivo: .env
+Conteúdo:
+SECRET_KEY=myverysecuresecretkey123
+
+Funcionalidade:
+- Armazena variáveis de ambiente sensíveis (como chaves secretas).
+- Evita expor informações diretamente no código.
+- Usado pelo FastAPI para operações seguras (ex: criptografia, autenticação).
+
+--------------------------------
+Arquivo: dependencies.py
+Funcionalidade:
+- Criação de dependência para gerenciar sessões do banco de dados.
+- Uso de `sessionmaker` para abrir e fechar conexões com o banco.
+
+Código principal:
+def pegar_sessao():
+    try:
+        session = sessionmaker(bind=db)
+        session = session()
+        yield session
+    finally:
+        session.close()
+
+Observação:
+- `yield` permite que a função forneça a sessão sem encerrá-la imediatamente.
+- `Depends(pegar_sessao)` será usado nas rotas para injetar a sessão do banco.
+
+--------------------------------
+Arquivo: main.py
+Funcionalidade:
+- Configuração principal da aplicação FastAPI.
+- Carregamento da variável SECRET_KEY do arquivo `.env`.
+- Criação de contexto de criptografia com bcrypt.
+- Inclusão dos routers de pedidos e autenticação.
+
+Código principal:
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")
+bcript_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+Observação:
+- `CryptContext` é usado para criptografar senhas.
+- `load_dotenv()` carrega variáveis do arquivo `.env`.
+
+--------------------------------
+Arquivo: rotas_autenticacao.py
+Funcionalidade:
+- Criação de rotas relacionadas à autenticação de usuários.
+- Implementação da rota para criar conta de usuário.
+
+Rotas:
+1. GET /auth/
+   - Rota padrão de autenticação.
+   - Retorna mensagem de acesso.
+
+2. POST /auth/Criar_Conta
+   - Recebe dados do usuário via `schema_usuario`.
+   - Verifica se já existe usuário com o mesmo email.
+   - Criptografa a senha com bcrypt.
+   - Cria novo usuário e salva no banco.
+   - Retorna mensagem de sucesso.
+
+Observação:
+- Uso de `Depends(pegar_sessao)` para injetar sessão do banco.
+- Uso de `HTTPException` para tratar erros (ex: usuário já existente).
+
+--------------------------------
+Arquivo: schemas.py
+Funcionalidade:
+- Definição de modelos de dados com Pydantic.
+- Validação automática dos dados recebidos pela API.
+
+Classe: schema_usuario
+Campos:
+- nome (str)
+- email (str)
+- senha (str)
+- ativo (Optional[bool])
+- admin (Optional[bool])
+
+Configuração:
+- `from_attributes = True` → permite que Pydantic use atributos dos modelos SQLAlchemy.
+
+--------------------------------
+Resumo da Aula 04:
+- Introdução ao uso de variáveis de ambiente (.env) para segurança.
+- Criação de dependência para gerenciar sessões do banco de dados.
+- Configuração de criptografia de senhas com bcrypt.
+- Implementação de rotas de autenticação:
+  - Rota padrão (/auth/)
+  - Rota para criar conta (/auth/Criar_Conta)
+- Uso de Pydantic para validação de dados recebidos pela API.
+
+Observações importantes:
+- `SECRET_KEY` será usado futuramente para geração de tokens JWT.
+- `Depends` facilita a injeção de dependências (como sessão do banco).
+- `CryptContext` garante que senhas sejam armazenadas de forma segura.

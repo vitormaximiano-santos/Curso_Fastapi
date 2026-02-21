@@ -1,0 +1,71 @@
+DATABASE SESSIONS IN FASTAPI PROJECTS
+
+1. Purpose of Sessions
+- A session represents a temporary connection between the application and the database.
+- It is used to manage transactions (queries, inserts, updates, deletes).
+- Ensures that all operations are executed in a controlled and consistent way.
+- Provides a context for interacting with ORM models.
+
+2. Why Sessions Are Useful
+- Transaction Management: Groups multiple operations into a single transaction.
+- Consistency: Ensures that either all operations succeed or none are applied (atomicity).
+- Performance: Reuses connections efficiently instead of opening a new one for each query.
+- Lifecycle Control: Sessions can be opened, committed, rolled back, and closed.
+
+3. Example with SQLAlchemy (Synchronous)
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+DATABASE_URL = "sqlite:///./test.db"
+
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Dependency for FastAPI
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+Explanation:
+- create_engine → creates a connection to the database.
+- sessionmaker → factory for creating new sessions.
+- autocommit=False → requires explicit commit for changes.
+- autoflush=False → prevents automatic flushing before queries.
+- get_db → dependency injection in FastAPI to provide a session per request.
+
+4. Example with SQLAlchemy (Asynchronous)
+
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+
+DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+
+engine = create_async_engine(DATABASE_URL, echo=True)
+AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        yield session
+
+Explanation:
+- create_async_engine → creates an async engine for non-blocking operations.
+- AsyncSession → manages async transactions.
+- async with → ensures proper session closing after use.
+
+5. Summary
+- Sessions are the core mechanism for interacting with the database in SQLAlchemy.
+- They manage transactions, ensure consistency, and optimize performance.
+- In FastAPI, sessions are typically injected into routes using dependencies.
+
+6. Best Practices/Standards with Sessions
+- Use one session per request to avoid conflicts.
+- Always close sessions after use to prevent leaks.
+- Handle exceptions with rollback to maintain consistency.
+- Avoid keeping sessions open for long periods.
+- Use async sessions for high-concurrency applications.
+- Store session logic in a dedicated database/connection.py file.
+- Combine sessions with Alembic migrations for schema evolution.
