@@ -1,0 +1,73 @@
+TOKEN (BEARER) IN FASTAPI PROJECTS
+
+1. What is a Bearer Token?
+- A Bearer Token is a type of access token used in HTTP authentication.
+- It is usually a JWT (JSON Web Token).
+- The client includes the token in the Authorization header when making requests.
+- Format: Authorization: Bearer <token>
+
+2. Purpose of Bearer Tokens
+- Authenticate users without sending username/password on every request.
+- Authorize access to protected routes and resources.
+- Provide stateless authentication: the server does not store session data.
+
+3. Why Bearer Tokens Are Useful
+- Security: Prevents exposing credentials repeatedly.
+- Scalability: Works well in distributed systems.
+- Simplicity: Easy to use with HTTP headers.
+- Integration: Supported by most frameworks and libraries.
+
+4. Example of Bearer Token Usage
+Request:
+GET /usuarios/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+Explanation:
+- The client sends the JWT in the Authorization header.
+- The server verifies the token before granting access.
+
+5. Example in FastAPI
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+
+app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
+SECRET_KEY = "mysecretkey"
+ALGORITHM = "HS256"
+
+def verify_token(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido ou expirado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+@app.get("/usuarios/me")
+def read_users_me(payload: dict = Depends(verify_token)):
+    return {"msg": "Usuário autenticado", "dados": payload}
+
+Explanation:
+- OAuth2PasswordBearer → defines how the token is extracted from the request.
+- verify_token → decodes and validates the JWT.
+- Protected route → requires a valid Bearer token.
+
+6. Summary
+- Bearer Tokens are the standard way to secure APIs.
+- They are passed in the Authorization header.
+- FastAPI integrates Bearer Tokens with OAuth2 and JWT easily.
+
+7. Best Practices/Standards with Bearer Tokens
+- Always use HTTPS to protect tokens in transit.
+- Set expiration times for tokens.
+- Refresh tokens periodically for long sessions.
+- Do not store sensitive data inside the token payload.
+- Validate tokens on every request to protected routes.
+- Use strong secret keys or key pairs for signing.

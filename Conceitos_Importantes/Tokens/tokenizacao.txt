@@ -1,0 +1,49 @@
+TOKENIZATION IN COMPUTING AND DATA SECURITY
+
+1. What is Tokenization?
+- Tokenization is the process of replacing sensitive data with a non-sensitive equivalent called a "token."
+- The token has no intrinsic meaning or exploitable value outside of the tokenization system.
+- The original data is securely stored in a vault or database, and the token acts as a reference to it.
+
+2. Purpose of Tokenization
+- Protects sensitive information such as credit card numbers, personal identifiers, or medical records.
+- Reduces the risk of data breaches by ensuring that exposed tokens cannot be used without the mapping system.
+- Commonly used in payment systems, healthcare, and compliance-heavy industries.
+
+3. Why Tokenization is Useful
+- Security: Tokens cannot be reversed into original data without access to the secure vault.
+- Compliance: Helps organizations meet standards like PCI DSS for payment card security.
+- Flexibility: Tokens can be used in applications without exposing sensitive data.
+- Efficiency: Simplifies handling of sensitive data across distributed systems.
+
+4. Example of Tokenization
+Original Data: 4111-1111-1111-1111 (credit card number)
+Tokenized Data: TKN-9876543210
+
+Explanation:
+- The token replaces the real card number.
+- The mapping between token and card number is stored securely.
+- If the token is stolen, it is useless without the vault.
+
+5. Tokenization vs. Encryption
+- Tokenization: Replaces data with a random token; no mathematical relationship to the original.
+- Encryption: Transforms data using an algorithm and key; can be decrypted back to original.
+- Tokenization is often preferred for compliance because tokens cannot be reversed without the system.
+
+6. Use Cases
+- Payment processing (credit cards, mobile wallets).
+- Healthcare (protecting patient identifiers).
+- Cloud applications (masking sensitive data).
+- Identity management (replacing personal identifiers with tokens).
+
+7. Summary
+- Tokenization is a powerful method for protecting sensitive data.
+- It reduces risk by ensuring exposed tokens have no value.
+- It is widely used in industries where data security and compliance are critical.
+
+8. Best Practices/Standards with Tokenization
+- Store original data in a secure, access-controlled vault.
+- Use random, non-predictable tokens.
+- Regularly audit tokenization systems for compliance.
+- Combine tokenization with encryption for layered security.
+- Ensure tokens are unique and cannot be guessed.

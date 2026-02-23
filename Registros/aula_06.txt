@@ -1,0 +1,99 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 06: Tokens JWT e Refresh Token
+Link: https://youtu.be/qqGkshRzw_g?list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq
+
+--------------------------------
+Arquivo: main.py
+Funcionalidade:
+- Configuração principal da aplicação FastAPI.
+- Carregamento de variáveis de ambiente do arquivo `.env`.
+- Definição de parâmetros para geração de tokens JWT:
+  - SECRET_KEY → chave secreta usada para assinar tokens.
+  - ALGORITHM → algoritmo de criptografia (HS256).
+  - ACCESS_TOKEN_EXPIRE_MINUTES → tempo de expiração do token de acesso.
+
+Código principal:
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
+Observação:
+- Agora o sistema está preparado para trabalhar com tokens JWT reais.
+- `CryptContext` continua sendo usado para criptografar senhas.
+
+--------------------------------
+Arquivo: .env
+Conteúdo:
+SECRET_KEY = "myverysecuresecretkey123"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+Funcionalidade:
+- Armazena variáveis de ambiente relacionadas à autenticação.
+- Define chave secreta, algoritmo e tempo de expiração do token.
+
+--------------------------------
+Arquivo: rotas_autenticacao.py
+Funcionalidade:
+- Criação de rotas relacionadas à autenticação de usuários.
+- Implementação de login com geração de tokens JWT.
+- Implementação de refresh token para renovar tokens expirados.
+
+Funções principais:
+1. criar_token(id_usuario, duracao_token):
+   - Gera token JWT com informações do usuário.
+   - Define data de expiração com base em `ACCESS_TOKEN_EXPIRE_MINUTES`.
+   - Usa `jwt.encode()` para criar o token.
+
+2. verificar_token(token):
+   - Função para validar token recebido.
+   - Extrai informações do usuário a partir do token.
+   - Retorna usuário associado.
+
+3. autenticar_usuario(email, senha, session):
+   - Verifica se usuário existe no banco.
+   - Valida senha criptografada com bcrypt.
+   - Retorna objeto usuário se válido.
+
+Rotas:
+1. GET /auth/
+   - Rota padrão de autenticação.
+   - Retorna mensagem de acesso.
+
+2. POST /auth/Criar_Conta
+   - Cria novo usuário no banco.
+   - Criptografa senha antes de salvar.
+   - Retorna mensagem de sucesso.
+
+3. POST /auth/Login
+   - Recebe email e senha.
+   - Autentica usuário.
+   - Gera `access_token` com expiração curta.
+   - Gera `refresh_token` com expiração maior (7 dias).
+   - Retorna ambos os tokens.
+
+4. POST /auth/Refresh_Token
+   - Recebe refresh token.
+   - Valida token.
+   - Gera novo access token.
+   - Retorna token atualizado.
+
+Observação:
+- Uso da biblioteca `python-jose` para manipulação de JWT.
+- `datetime` e `timedelta` usados para controlar expiração dos tokens.
+- Agora o sistema tem suporte a **login seguro com JWT** e **refresh token**.
+
+--------------------------------
+Resumo da Aula 06:
+- Introdução ao uso de JWT (JSON Web Token) para autenticação.
+- Configuração de variáveis de ambiente para chave secreta, algoritmo e tempo de expiração.
+- Implementação de funções para criar, verificar e autenticar tokens.
+- Criação de rotas para login e refresh token.
+- Sistema de autenticação mais robusto e seguro.
+
+Observações importantes:
+- JWT é usado para autenticação em APIs modernas.
+- Access token expira rapidamente, garantindo segurança.
+- Refresh token permite renovar o access token sem precisar logar novamente.
+- Próximas etapas: proteger rotas usando validação de token.

@@ -1,0 +1,65 @@
+ASYNC FUNCTIONS IN FASTAPI PROJECTS
+
+1. What are Async Functions?
+- Async functions are functions defined with the keyword "async" in Python.
+- They allow asynchronous programming, meaning tasks can run concurrently without blocking each other.
+- Useful for I/O-bound operations like database queries, API calls, or file handling.
+
+2. Purpose of Async Functions
+- Improve performance by handling multiple requests simultaneously.
+- Prevent blocking the main thread during long operations.
+- Enable scalable applications that can serve many users efficiently.
+
+3. Why Async Functions Are Useful
+- Concurrency: Multiple tasks can be executed at the same time.
+- Efficiency: Better resource usage, especially in web servers.
+- Responsiveness: Applications remain responsive even under heavy load.
+- Integration: FastAPI is built to work seamlessly with async functions.
+
+4. Example of Async Function in Python
+
+import asyncio
+
+async def fetch_data():
+    print("Fetching data...")
+    await asyncio.sleep(2)
+    return {"data": "example"}
+
+async def main():
+    result = await fetch_data()
+    print(result)
+
+asyncio.run(main())
+
+Explanation:
+- async def → defines an asynchronous function.
+- await → pauses execution until the awaited task completes.
+- asyncio.run → runs the async event loop.
+
+5. Example in FastAPI
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items/")
+async def read_items():
+    return {"msg": "This is an async route"}
+
+Explanation:
+- async def read_items → defines an asynchronous route handler.
+- FastAPI automatically manages the event loop.
+- Async routes can handle concurrent requests efficiently.
+
+6. Summary
+- Async functions are essential for modern web applications.
+- They allow non-blocking operations and improve scalability.
+- FastAPI leverages async to deliver high-performance APIs.
+
+7. Best Practices/Standards with Async Functions
+- Use async for I/O-bound tasks (database, network calls).
+- Avoid using async for CPU-bound tasks (use multiprocessing instead).
+- Always use await when calling async functions.
+- Keep async functions small and focused.
+- Test async functions carefully to ensure proper concurrency.
+- Combine async with dependency injection in FastAPI for clean architecture.
