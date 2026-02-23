@@ -1,0 +1,112 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 07: Proteção de Rotas com OAuth2 e JWT
+Link: https://youtu.be/UdaHy0pxTl4?list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq
+
+--------------------------------
+Arquivo: dependencies.py
+Funcionalidade:
+- Gerenciamento de sessões do banco de dados.
+- Verificação de tokens JWT para proteger rotas.
+
+Funções principais:
+1. pegar_sessao():
+   - Cria e gerencia sessão do banco usando `sessionmaker`.
+   - Usa `yield` para fornecer sessão sem encerrar imediatamente.
+   - Fecha sessão no `finally`.
+
+2. verificar_token(token, session):
+   - Recebe token via `Depends(oauth2_scheme)`.
+   - Decodifica token JWT usando `SECRET_KEY` e `ALGORITHM`.
+   - Extrai `sub` (id do usuário) do token.
+   - Consulta usuário no banco com esse id.
+   - Se inválido ou não encontrado, lança `HTTPException`.
+   - Retorna objeto usuário válido.
+
+--------------------------------
+Arquivo: main.py
+Funcionalidade:
+- Configuração principal da aplicação FastAPI.
+- Definição de variáveis de ambiente para autenticação.
+- Configuração do fluxo OAuth2PasswordBearer.
+
+Código principal:
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/Login_form")
+
+Observação:
+- `OAuth2PasswordBearer` define que o token será obtido via rota `/auth/Login_form`.
+- Agora o Swagger UI pode autenticar automaticamente usando username/password.
+
+--------------------------------
+Arquivo: rotas_autenticacao.py
+Funcionalidade:
+- Criação de rotas relacionadas à autenticação.
+- Implementação de login com JSON e com formulário OAuth2.
+- Proteção de rotas usando verificação de token.
+
+Funções principais:
+1. criar_token(id_usuario, duracao_token):
+   - Gera token JWT com `sub` (id do usuário) e `exp` (expiração).
+   - Usa `jwt.encode()` para criar token seguro.
+
+2. autenticar_usuario(email, senha, session):
+   - Verifica se usuário existe no banco.
+   - Valida senha criptografada com bcrypt.
+   - Retorna objeto usuário se válido.
+
+Rotas:
+1. GET /auth/
+   - Rota padrão de autenticação.
+   - Retorna mensagem de acesso.
+
+2. POST /auth/Criar_Conta
+   - Cria novo usuário no banco.
+   - Criptografa senha antes de salvar.
+   - Retorna mensagem de sucesso.
+
+3. POST /auth/Login
+   - Recebe email e senha via JSON.
+   - Autentica usuário.
+   - Retorna access_token e refresh_token.
+
+4. POST /auth/Login_form
+   - Recebe username e password via formulário OAuth2.
+   - Autentica usuário.
+   - Retorna access_token.
+   - Compatível com Swagger UI.
+
+5. GET /auth/refresh
+   - Protegida por `Depends(verificar_token)`.
+   - Recebe token válido.
+   - Gera novo access_token.
+   - Retorna token atualizado.
+
+--------------------------------
+Arquivo: testes.py
+Funcionalidade:
+- Teste de rota protegida usando requests.
+
+Código principal:
+headers = {"Authorization": "Bearer <token>"}
+requesicao = requests.get("http://127.0.0.1:8000/auth/refresh", headers=headers)
+
+Observação:
+- Envia token JWT no cabeçalho Authorization.
+- Testa se rota /auth/refresh retorna novo access_token.
+
+--------------------------------
+Resumo da Aula 07:
+- Implementação de fluxo OAuth2PasswordBearer para autenticação.
+- Criação de rota `/auth/Login_form` compatível com Swagger UI.
+- Proteção de rotas com verificação de token JWT.
+- Teste prático de rota protegida usando requests e cabeçalho Authorization.
+
+Observações importantes:
+- Agora o Swagger UI pode autenticar automaticamente com username/password.
+- Tokens JWT são usados para proteger rotas e validar usuários.
+- Refresh token pode ser usado para renovar access tokens.
+- O sistema está pronto para proteger endpoints sensíveis.

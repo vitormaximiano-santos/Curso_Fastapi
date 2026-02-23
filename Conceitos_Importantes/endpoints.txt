@@ -1,0 +1,65 @@
+ENDPOINTS IN FASTAPI PROJECTS
+
+1. What is an Endpoint?
+- An endpoint is a specific URL path in an API that clients can call to perform an action or retrieve data.
+- Each endpoint corresponds to a route in FastAPI.
+- Endpoints define how the server responds to HTTP requests (GET, POST, PUT, DELETE, etc.).
+
+2. Purpose of Endpoints
+- Provide access to resources (e.g., users, orders, products).
+- Define the operations available in the API.
+- Enable communication between client applications and the server.
+
+3. Why Endpoints Are Useful
+- Organization: Each endpoint handles a specific resource or action.
+- Scalability: APIs can grow by adding new endpoints without breaking existing ones.
+- Flexibility: Endpoints can return JSON, HTML, or other formats.
+- Integration: Clients (web apps, mobile apps) interact with endpoints to exchange data.
+
+4. Example of Endpoints in FastAPI
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items/")
+def read_items():
+    return {"msg": "List of items"}
+
+@app.post("/items/")
+def create_item(item: dict):
+    return {"msg": "Item created", "item": item}
+
+Explanation:
+- GET /items/ → retrieves a list of items.
+- POST /items/ → creates a new item with data from the request body.
+
+5. Endpoint Methods
+- GET: Retrieve data.
+- POST: Create new data.
+- PUT: Update existing data.
+- DELETE: Remove data.
+- PATCH: Partially update data.
+
+6. Example with Parameters
+
+@app.get("/users/{user_id}")
+def read_user(user_id: int):
+    return {"msg": f"User with ID {user_id}"}
+
+Explanation:
+- {user_id} → path parameter.
+- The endpoint returns data for a specific user.
+
+7. Summary
+- Endpoints are the building blocks of APIs.
+- They define how clients interact with the server.
+- FastAPI makes endpoint creation simple and efficient.
+
+8. Best Practices/Standards with Endpoints
+- Use clear and consistent naming conventions (e.g., /users/, /orders/).
+- Follow REST principles for resource management.
+- Validate input data with Pydantic models.
+- Return consistent JSON responses.
+- Document endpoints using FastAPI’s built-in OpenAPI docs (/docs).
+- Secure endpoints with authentication and authorization when needed.

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from passlib.context import CryptContext
+from fastapi.security import OAuth2PasswordBearer
 from dotenv import load_dotenv
 import os
 
@@ -18,6 +19,9 @@ app = FastAPI()
 # "main:app" é o nome do app definido acima "app = FastAPI()"
 
 bcript_context = CryptContext(schemes=["bcrypt"], deprecated="auto") # cria um objeto de contexto para bcrypt, que é usado para criptografar senhas: 
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/Login_form")
+
 
 from rotas_ordem import order_router
 from rotas_autenticacao import auth_router
