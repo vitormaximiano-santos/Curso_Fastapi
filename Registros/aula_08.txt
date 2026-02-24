@@ -1,0 +1,56 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 08: Autorização em Rotas de Pedidos
+Link: https://youtu.be/SKOFexQqiNE?list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq
+
+--------------------------------
+Arquivo: rotas_ordem.py
+Funcionalidade:
+- Criação de rotas relacionadas a pedidos.
+- Proteção das rotas com autenticação via JWT.
+- Implementação de cancelamento de pedidos com verificação de permissões.
+
+Configuração principal:
+order_router = APIRouter(
+    prefix="/pedidos",
+    tags=["pedidos"],
+    dependencies=[Depends(verificar_token)]
+)
+
+Observação:
+- Todas as rotas dentro de `order_router` exigem autenticação.
+- `Depends(verificar_token)` garante que apenas usuários com token válido possam acessar.
+
+Rotas:
+1. GET /pedidos/
+   - Rota padrão de pedidos.
+   - Retorna mensagem de acesso.
+   - Protegida por autenticação.
+
+2. POST /pedidos/pedido
+   - Recebe dados do pedido via `SchemaPedido`.
+   - Cria novo pedido associado a um usuário.
+   - Salva no banco e retorna mensagem de sucesso.
+   - Protegida por autenticação.
+
+3. POST /pedidos/pedido/cancelar/{id_pedido}
+   - Recebe id do pedido como parâmetro.
+   - Verifica se pedido existe.
+   - Verifica se usuário tem permissão para cancelar:
+     - Usuário administrador (`usuario.admin == True`), ou
+     - Usuário dono do pedido (`usuario.id == pedido.usuario`).
+   - Se não autorizado, retorna erro 401.
+   - Se autorizado, altera status do pedido para "cancelado".
+   - Retorna mensagem de sucesso e dados do pedido.
+
+--------------------------------
+Resumo da Aula 08:
+- Implementação de autorização em rotas de pedidos.
+- Uso de `dependencies=[Depends(verificar_token)]` para exigir autenticação em todas as rotas do router.
+- Criação de rota para cancelar pedidos com verificação de permissões.
+- Sistema agora diferencia permissões de administrador e usuário comum.
+
+Observações importantes:
+- Apenas usuários autenticados podem acessar rotas de pedidos.
+- Cancelamento de pedidos exige que o usuário seja dono do pedido ou administrador.
+- O sistema evoluiu de autenticação (login) para autorização (controle de acesso).

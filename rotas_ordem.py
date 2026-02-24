@@ -1,12 +1,11 @@
-from fastapi import APIRouter,  Depends
+from fastapi import APIRouter,  Depends, HTTPException
 from sqlalchemy.orm import Session
-from dependencies import pegar_sessao
-from models import Pedido
+from dependencies import pegar_sessao, verificar_token
 from schemas import SchemaPedido
-
+from models import Pedido, Usuario
 
 # rotas para autenticação
-order_router = APIRouter(prefix="/pedidos", tags=["pedidos"])# "APIRouter" é uma classe que define rotas
+order_router = APIRouter(prefix="/pedidos", tags=["pedidos"],dependencies=[Depends(verificar_token)] )# "APIRouter" é uma classe que define rotas
 # "prefix" é o caminho para a rota,serve para organizar as rotas
 # "tags" é uma lista de tags para a rota, ajuda a organizar as rotas
 
@@ -36,3 +35,22 @@ async def criar_pedido(SchemaPedido: SchemaPedido,session: Session = Depends(peg
     
     # a função criar_pedido() retorna um dicionário com a mensagem "Mensagem"
     return {"Mensagem": f"Pedido criado com sucesso, id do usuario: {novo_pedido.usuario}"}
+
+
+@order_router.post("/pedido/cancelar/{id_pedido}")
+async def cancelar_pedido(id_pedido: int, session: Session = Depends(pegar_sessao),usuario:Usuario = Depends(verificar_token)):
+    pedido = session.query(Pedido).filter(Pedido.id == id_pedido).first()
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    
+    if not Usuario.admin and Usuario.id != pedido.usuario:
+        raise HTTPException(status_code=401, detail="Você não tem permissão para cancelar esse pedido")
+    
+    pedido.status = "cancelado"
+    session.commit()
+    return {
+        "Mensagem": f"Pedido número {pedido.id} foi cancelado com sucesso",
+        "pedido": pedido
+        }
+    
+

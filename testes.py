@@ -6,3 +6,12 @@ requesicao = requests.get("http://127.0.0.1:8000/auth/refresh", headers = header
 
 print(requesicao)
 print(requesicao.json())
+
+
+"""conta:admin01: {
+  "nome": "admin01",
+  "email": "admin1@gmail.com",
+  "senha": "ad01",
+  "ativo": true,
+  "admin": true
+}"""
