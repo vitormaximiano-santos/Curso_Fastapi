@@ -1,0 +1,101 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 10 (Final): CRUD Completo de Pedidos e Itens
+Link: https://youtu.be/Jcndo1UKBOM?list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq
+
+--------------------------------
+Arquivo: rotas_ordem.py
+Funcionalidade:
+- Criação de rotas relacionadas a pedidos.
+- Proteção das rotas com autenticação via JWT.
+- Implementação de operações completas (CRUD) para pedidos e itens.
+
+Rotas:
+1. GET /pedidos/
+   - Rota padrão de pedidos.
+   - Retorna mensagem de acesso.
+
+2. POST /pedidos/pedido
+   - Cria novo pedido associado a um usuário.
+   - Salva no banco e retorna mensagem de sucesso.
+
+3. POST /pedidos/pedido/cancelar/{id_pedido}
+   - Cancela pedido existente.
+   - Verifica se usuário é administrador ou dono do pedido.
+   - Atualiza status para "cancelado".
+
+4. GET /pedidos/listar_pedidos
+   - Lista todos os pedidos.
+   - Apenas administradores podem acessar.
+   - Retorna lista de pedidos.
+
+5. POST /pedidos/pedido/adicionar_item/{id_pedido}
+   - Adiciona item a um pedido existente.
+   - Verifica se pedido existe.
+   - Verifica se usuário é administrador ou dono do pedido.
+   - Cria objeto ItemPedido e associa ao pedido.
+   - Atualiza preço total do pedido com `calcular_preco()`.
+   - Retorna mensagem de sucesso e item adicionado.
+
+6. POST /pedidos/pedido/remover_item/{id_item_pedido}
+   - Remove item de um pedido existente.
+   - Verifica se item existe.
+   - Verifica se usuário é administrador ou dono do pedido.
+   - Remove item do banco.
+   - Atualiza preço total do pedido com `calcular_preco()`.
+   - Retorna mensagem de sucesso, quantidade de itens restantes e pedido atualizado.
+
+7. POST /pedidos/pedido/finalizar/{id_pedido}
+   - Finaliza pedido existente.
+   - Verifica se usuário é administrador ou dono do pedido.
+   - Atualiza status para "finalizado".
+   - Retorna mensagem de sucesso e pedido atualizado.
+
+8. GET /pedidos/pedido/{id_pedido}
+   - Visualiza detalhes de um pedido específico.
+   - Verifica se usuário é administrador ou dono do pedido.
+   - Retorna quantidade de itens e dados do pedido.
+
+9. GET /pedidos/listar/pedidos-usuario
+   - Lista todos os pedidos do usuário autenticado.
+   - Retorna lista de pedidos com base no `SchemaResponsePedido`.
+
+--------------------------------
+Arquivo: schemas.py
+Funcionalidade:
+- Definição de modelos de dados com Pydantic.
+- Validação automática dos dados recebidos pela API.
+- Criação de modelos de resposta para pedidos.
+
+Classes:
+1. SchemaUsuario:
+   - Campos: nome, email, senha, ativo, admin.
+
+2. SchemaPedido:
+   - Campo: usuario (int).
+
+3. SchemaLogin:
+   - Campos: email, senha.
+
+4. SchemaItemPedido:
+   - Campos: quantidade, sabor, tamanho, preco_unitario.
+
+5. SchemaResponsePedido:
+   - Campos: id, status, preco, itens (lista de SchemaItemPedido).
+   - Usado como modelo de resposta para listar pedidos do usuário.
+
+Configuração:
+- `from_attributes = True` → permite que Pydantic use atributos dos modelos SQLAlchemy.
+
+--------------------------------
+Resumo da Aula 10 (Final):
+- Implementação completa de CRUD para pedidos e itens.
+- Criação de rotas para adicionar, remover, cancelar, finalizar e visualizar pedidos.
+- Criação de rota para listar pedidos do usuário autenticado.
+- Uso de `SchemaResponsePedido` para estruturar respostas de listagem.
+- Sistema finalizado com autenticação, autorização e operações completas de pedidos.
+
+Observações importantes:
+- Apenas usuários autenticados podem acessar rotas de pedidos.
+- Cancelamento, finalização e visualização de pedidos exigem que o usuário seja dono ou administrador.
+- O sistema agora está completo, cobrindo autenticação, autorização e manipulação de dados relacionados a pedidos e itens.

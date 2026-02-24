@@ -1,6 +1,6 @@
 from pydantic import BaseModel # BaseModel é uma classe que herda de pydantic.BaseModel, serve para criar modelos de dados, com validação e serialização, e integração com FastAPI, Pydantic é uma biblioteca para trabalhar com modelos de dados em Python
 
-from typing import Optional
+from typing import Optional,List
 
 class SchemaUsuario(BaseModel): # cria um modelo de dados para usuários "BaseModel" é uma classe que herda de pydantic.BaseModel
     
@@ -36,3 +36,11 @@ class SchemaItemPedido(BaseModel):
     class Config:
         from_attributes = True
         
+class SchemaResponsePedido(BaseModel):
+    id: int
+    status: str
+    preco: float
+    itens : List[SchemaItemPedido]
+    
+    class Config:
+        from_attributes = True
