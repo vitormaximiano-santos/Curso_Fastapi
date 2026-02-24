@@ -1,0 +1,89 @@
+RELATIONSHIPS IN MODELS (FASTAPI + SQLALCHEMY)
+
+1. What are Relationships in Models?
+- In databases, relationships define how tables are connected.
+- SQLAlchemy allows you to represent these relationships directly in Python models.
+- Common types: One-to-One, One-to-Many, Many-to-Many.
+
+2. Purpose of Relationships
+- Enable linking of data across tables (e.g., users and orders).
+- Simplify queries by allowing navigation between related objects.
+- Maintain referential integrity in the database.
+
+3. Why Relationships Are Useful
+- Organization: Keeps data normalized and structured.
+- Efficiency: Avoids duplication of data.
+- Flexibility: Allows complex queries and joins.
+- Integration: FastAPI + SQLAlchemy + Pydantic can serialize relationships into JSON easily.
+
+4. Types of Relationships
+- One-to-One: Each record in one table relates to exactly one record in another.
+- One-to-Many: A record in one table relates to multiple records in another.
+- Many-to-Many: Records in both tables can relate to multiple records in each other.
+
+5. Example: One-to-Many (User → Orders)
+
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from database import Base
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+
+    # Relationship: one user has many orders
+    orders = relationship("Order", back_populates="owner")
+
+class Order(Base):
+    __tablename__ = "orders"
+    id = Column(Integer, primary_key=True, index=True)
+    item = Column(String, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    # Relationship: each order belongs to one user
+    owner = relationship("User", back_populates="orders")
+
+Explanation:
+- User.orders → list of orders linked to the user.
+- Order.owner → the user who owns the order.
+- ForeignKey ensures referential integrity.
+
+6. Example: Many-to-Many (Students ↔ Courses)
+
+association_table = Table(
+    "student_course",
+    Base.metadata,
+    Column("student_id", ForeignKey("students.id")),
+    Column("course_id", ForeignKey("courses.id"))
+)
+
+class Student(Base):
+    __tablename__ = "students"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+    courses = relationship("Course", secondary=association_table, back_populates="students")
+
+class Course(Base):
+    __tablename__ = "courses"
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+
+    students = relationship("Student", secondary=association_table, back_populates="courses")
+
+Explanation:
+- association_table → intermediate table linking students and courses.
+- Students can enroll in many courses, and courses can have many students.
+
+7. Summary
+- Relationships connect models and make queries more powerful.
+- SQLAlchemy provides `relationship()` and `ForeignKey` to define them.
+- FastAPI + Pydantic can serialize these relationships into JSON responses.
+
+8. Best Practices/Standards with Relationships
+- Always define `back_populates` or `backref` for clarity.
+- Use meaningful names for relationship attributes.
+- Keep relationships consistent with database design.
+- Avoid circular imports by organizing models carefully.
+- Document relationships in API docs for client developers.

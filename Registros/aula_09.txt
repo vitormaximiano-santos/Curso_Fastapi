@@ -1,0 +1,100 @@
+Registro de Aula - Curso FastAPI (Hashtag Treinamentos)
+
+Aula 09: Relacionamentos entre Tabelas e Manipulação de Itens
+Link: https://youtu.be/fuCkkBN0ef8?list=PLpdAy0tYrnKy3TvpCT-x7kGqMQ5grk1Xq
+
+--------------------------------
+Arquivo: models.py
+Funcionalidade:
+- Definição das tabelas de usuários, pedidos e itens de pedidos.
+- Implementação de relacionamentos entre tabelas usando SQLAlchemy.
+
+Principais pontos:
+1. Classe Usuario:
+   - Representa tabela "usuarios".
+   - Campos: id, nome, email, senha, ativo, admin.
+   - Construtor para inicializar objetos de usuário.
+
+2. Classe Pedido:
+   - Representa tabela "pedidos".
+   - Campos: id, status, usuario (chave estrangeira), preco.
+   - Relacionamento: `itens = relationship("ItemPedido", cascade="all, delete")`.
+   - Método `calcular_preco()` para calcular preço total do pedido com base nos itens.
+
+3. Classe ItemPedido:
+   - Representa tabela "itenspedidos".
+   - Campos: id, quantidade, sabor, tamanho, preco_unitario, pedido (chave estrangeira).
+   - Construtor para inicializar objetos de item de pedido.
+
+Observação:
+- Agora os pedidos possuem relacionamento direto com itens.
+- O método `calcular_preco()` permite atualizar o valor total dinamicamente.
+
+--------------------------------
+Arquivo: rotas_ordem.py
+Funcionalidade:
+- Criação de rotas relacionadas a pedidos.
+- Proteção das rotas com autenticação via JWT.
+- Implementação de listagem de pedidos e adição de itens.
+
+Rotas:
+1. GET /pedidos/
+   - Rota padrão de pedidos.
+   - Retorna mensagem de acesso.
+
+2. POST /pedidos/pedido
+   - Cria novo pedido associado a um usuário.
+   - Salva no banco e retorna mensagem de sucesso.
+
+3. POST /pedidos/pedido/cancelar/{id_pedido}
+   - Cancela pedido existente.
+   - Verifica se usuário é administrador ou dono do pedido.
+   - Atualiza status para "cancelado".
+
+4. GET /pedidos/listar_pedidos
+   - Lista todos os pedidos.
+   - Apenas administradores podem acessar.
+   - Retorna lista de pedidos.
+
+5. POST /pedidos/pedido/adicionar_item/{id_pedido}
+   - Adiciona item a um pedido existente.
+   - Verifica se pedido existe.
+   - Verifica se usuário é administrador ou dono do pedido.
+   - Cria objeto ItemPedido e associa ao pedido.
+   - Atualiza preço total do pedido com `calcular_preco()`.
+   - Retorna mensagem de sucesso e item adicionado.
+
+--------------------------------
+Arquivo: schemas.py
+Funcionalidade:
+- Definição de modelos de dados com Pydantic.
+- Validação automática dos dados recebidos pela API.
+
+Classes:
+1. SchemaUsuario:
+   - Campos: nome, email, senha, ativo, admin.
+
+2. SchemaPedido:
+   - Campo: usuario (int).
+
+3. SchemaLogin:
+   - Campos: email, senha.
+
+4. SchemaItemPedido:
+   - Campos: quantidade, sabor, tamanho, preco_unitario.
+
+Configuração:
+- `from_attributes = True` → permite que Pydantic use atributos dos modelos SQLAlchemy.
+
+--------------------------------
+Resumo da Aula 09:
+- Implementação de relacionamentos entre pedidos e itens usando SQLAlchemy.
+- Criação de rota para listar pedidos (restrita a administradores).
+- Criação de rota para adicionar itens a pedidos existentes.
+- Atualização automática do preço total do pedido ao adicionar itens.
+- Sistema agora suporta operações mais complexas de pedidos e itens.
+
+Observações importantes:
+- O relacionamento entre Pedido e ItemPedido permite manipulação em cascata.
+- Apenas administradores podem listar todos os pedidos.
+- Usuários comuns só podem adicionar itens aos seus próprios pedidos.
