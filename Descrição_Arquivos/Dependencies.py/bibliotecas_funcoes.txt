@@ -1,0 +1,82 @@
+FastAPI Dependencies
+---------------------
+Library: fastapi
+Description: FastAPI provides tools for building APIs with Python, including dependency injection and error handling.
+Official Documentation: https://fastapi.tiangolo.com/
+
+Function: Depends
+Description: A utility that allows you to declare dependencies in your path operations. 
+It automatically resolves and injects the required values into your functions.
+
+Function: HTTPException
+Description: An exception class used to return HTTP error responses. 
+You can specify status codes and error details when raising this exception.
+
+Key Concepts:
+- Dependency Injection: FastAPI automatically provides required objects to functions.
+- HTTP Status Codes: Standard codes like 401 (Unauthorized), 404 (Not Found).
+- Error Handling: Raising HTTPException ensures consistent error responses.
+
+------------------------------------------------------------
+
+Main Application Variables
+---------------------------
+Library: main (custom module)
+Description: Contains application-specific constants and configurations.
+
+Variables:
+- "SECRET_KEY": a secret string used to sign and verify tokens (e.g., JWT).
+- "ALGORITHM": specifies the cryptographic algorithm used for token encoding/decoding.
+- "oauth2_scheme": dependency object for OAuth2 authentication, imported from the main app.
+
+Key Concepts:
+- Secret Key: ensures tokens cannot be forged.
+- Algorithm: defines the encryption/signature method (e.g., HS256).
+- Security Dependency: integrates authentication into routes.
+
+------------------------------------------------------------
+
+Database Models
+----------------
+Library: models (custom module)
+Description: Contains database models and connection objects.
+
+Variable: db
+Description: Object that stores the database connection, used to interact with the database.
+
+Library: sqlalchemy.orm
+Description: SQLAlchemy ORM provides tools for working with relational databases in Python.
+Official Documentation: https://docs.sqlalchemy.org/en/20/orm/
+
+Functions:
+- "sessionmaker": a factory class that creates new database sessions.
+- "Session": class representing a database session, used to query and persist data.
+
+Model: Usuario
+Description: Represents the "Usuario" (User) table in the database, 
+with fields like username, password, and other user-related data.
+
+Key Concepts:
+- ORM (Object Relational Mapping): maps Python classes to database tables.
+- Session: manages transactions and queries.
+- User Model: defines the structure of user data in the database.
+
+------------------------------------------------------------
+
+Python-JOSE
+------------
+Library: jose
+Description: Python-JOSE is a library for handling JSON Web Tokens (JWT) and JOSE standards.
+Official Documentation: https://python-jose.readthedocs.io/
+
+Functions:
+- "jwt": module for encoding and decoding JWT tokens.
+- "JWTError": exception raised when token validation fails.
+
+Key Concepts:
+- JWT (JSON Web Token): a compact, URL-safe token used for authentication.
+- Token Encoding: creating a signed token with user data.
+- Token Decoding: verifying and extracting data from a token.
+- Error Handling: JWTError ensures invalid tokens are properly rejected.
+
+------------------------------------------------------------

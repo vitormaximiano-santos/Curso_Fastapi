@@ -1,0 +1,198 @@
+File Function 
+-------------- 
+File: main.py Description: This file defines the main FastAPI application, loads environment variables, 
+configures security settings, sets up password hashing, and integrates modular routers. 
+It serves as the entry point of the API. 
+
+Key Responsibilities: 
+  - Load environment variables from the .env file using load_dotenv(). 
+  - Retrieve sensitive configuration values (SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES) using os.getenv(). 
+  - Initialize the FastAPI application instance. 
+  - Configure password hashing with Passlib (bcrypt). 
+  - Set up OAuth2 authentication with bearer tokens. 
+  - Import and include routers for modular route management (order_router, auth_router). 
+  - Provide instructions for running the application with Uvicorn.
+
+  Purpose/Function in the code: Acts as the central file that orchestrates the API: 
+  - Security: manages JWT token configuration and authentication. 
+  - Password Management: ensures secure password hashing with bcrypt. 
+  - Modularity: organizes routes into separate modules and integrates them. 
+  - Application Startup: defines the FastAPI app and provides the command to run it.
+
+------------------------------------------------------------
+load_dotenv()
+# loads environment variables from the .env file:
+
+    - "load_dotenv()": function from the python-dotenv library that reads key-value pairs 
+      from a .env file and adds them to the system environment.
+
+    - Key Concepts:
+       - "Environment Variables": configuration values stored outside the code (e.g., SECRET_KEY).
+       - "Separation of Concerns": keeps sensitive data out of source code.
+       - "Configuration Management": simplifies switching between development, testing, and production.
+
+    - Purpose/Function in the code:
+       Ensures sensitive values like SECRET_KEY and ALGORITHM are loaded securely 
+       from the .env file instead of being hardcoded.
+------------------------------------------------------------
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+# retrieves environment variables for security and token configuration:
+
+    - Usage of "os":
+       - "os" is a standard Python library that provides functions to interact 
+         with the operating system.
+       - "os.getenv()": retrieves the value of an environment variable by name.
+         If the variable is not set, it returns None (or a default value if provided).
+       - In this code, "os.getenv()" is used to securely load values defined 
+         in the .env file (via load_dotenv) into Python variables.
+
+    - Variables:
+       - "SECRET_KEY": secret string used to sign and verify JWT tokens.
+       - "ALGORITHM": specifies the cryptographic algorithm used for token 
+         encoding/decoding (e.g., HS256).
+       - "ACCESS_TOKEN_EXPIRE_MINUTES": defines how long an access token remains valid.
+
+    - Reason for formatting with int():
+       - Environment variables are always loaded as strings.
+       - "ACCESS_TOKEN_EXPIRE_MINUTES" must be an integer to represent 
+         the number of minutes for token expiration.
+       - Wrapping with "int()" converts the string value (e.g., "30") 
+         into an integer (30), ensuring correct arithmetic and time calculations.
+
+    - Key Concepts:
+       - "JWT (JSON Web Token)": compact, URL-safe token used for authentication.
+       - "Token Expiration": limits how long a token is valid, improving security.
+       - "Secret Key": ensures tokens cannot be forged.
+       - "Environment Variables": external configuration values, 
+         keeping sensitive data out of source code.
+
+    - Purpose/Function in the code:
+       Provides secure configuration values for authentication and token management, 
+       ensuring sensitive data is loaded from environment variables and properly 
+       formatted for use in security operations.
+------------------------------------------------------------
+
+bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto") 
+# creates a context object for bcrypt, which is used to hash passwords:
+
+    - "bcrypt_context": variable that stores the context object for bcrypt.
+
+    - "schemes=['bcrypt']": specifies the hashing algorithm to be used 
+      (in this case, bcrypt is the main and default algorithm).
+
+    - "deprecated='auto'": defines which algorithms should be considered deprecated.
+       - "deprecated": parameter that indicates whether a hashing scheme should be 
+         marked as deprecated (obsolete).
+           - Deprecated: means the scheme will not be used for new password hashing, 
+             but existing hashes can still be verified.
+           - Not deprecated: means the scheme can be used both for hashing new passwords 
+             and for verifying existing ones.
+       - "auto": means that all algorithms except the default (the first in the list) 
+         will automatically be marked as deprecated. 
+         This allows old hashes to be verified, but new hashes will only be created 
+         with the default algorithm.
+
+    - "bcrypt": the chosen hashing algorithm, considered secure and recommended 
+      for password storage.
+
+    - Key Concepts:
+       - "Default Scheme": the main algorithm used to create new hashes 
+         (here, bcrypt).
+       - "Deprecated Scheme": older algorithms still accepted for verification, 
+         but not used for new hashes.
+       - "Hash Migration": automatic process where, when verifying a password 
+         stored with a deprecated scheme, Passlib re-hashes the password using 
+         the default scheme (bcrypt), keeping security up to date.
+
+    - Purpose/Function in the code:
+       Creates a password hashing context that ensures all new passwords 
+       are hashed with bcrypt, while still allowing verification of old hashes 
+       if other schemes were previously used. This provides both backward 
+       compatibility and strong security for new data.
+------------------------------------------------------------
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/Login_form")
+# creates a dependency object for OAuth2 authentication using bearer tokens:
+
+    - "oauth2_scheme": variable that stores the OAuth2PasswordBearer object, 
+      which is used to extract and validate bearer tokens from requests.
+
+    - "OAuth2PasswordBearer": FastAPI class that defines how to retrieve 
+      a bearer token from the "Authorization" header in HTTP requests.
+
+    - "tokenUrl='/auth/Login_form'": specifies the endpoint where clients 
+      can obtain a token (usually after submitting username and password).
+
+    - Key Concepts:
+       - "OAuth2": an authorization framework for secure delegated access.
+       - "Bearer Token": a token passed in the Authorization header to 
+         prove identity.
+       - "Dependency Injection": FastAPI uses this object as a dependency 
+         to enforce authentication in protected routes.
+
+    - Purpose/Function in the code:
+       Provides a standardized way to handle authentication, ensuring that 
+       protected endpoints require a valid bearer token obtained from 
+       "/auth/Login_form".
+------------------------------------------------------------
+
+from rotas_ordem import order_router
+from rotas_autenticacao import auth_router
+# imports routers from other modules:
+
+    - "order_router": variable that stores the router object for order-related routes.
+    - "auth_router": variable that stores the router object for authentication-related routes.
+
+    - "Router": in FastAPI, a router is a modular way to group related endpoints 
+      (e.g., all order routes in one file, all authentication routes in another).
+
+    - Key Concepts:
+       - "Modularity": separating routes into different files/modules for better organization.
+       - "Router": allows grouping and reusing route definitions.
+       - "Import": brings external modules into the main application.
+
+    - Purpose/Function in the code:
+       Makes the application modular by importing route definitions from 
+       separate files, improving maintainability and readability.
+------------------------------------------------------------
+
+app = FastAPI()
+# creates the main FastAPI application instance:
+
+    - "app": variable that stores the FastAPI application object.
+
+    - "FastAPI()": constructor that initializes the application, 
+      enabling route definitions, middleware, and configurations.
+
+    - Key Concepts:
+       - "Application Instance": the central object that runs the API.
+       - "ASGI": FastAPI is built on ASGI, supporting asynchronous requests.
+       - "Interactive Docs": FastAPI automatically generates Swagger UI and ReDoc.
+
+    - Purpose/Function in the code:
+       Serves as the main entry point of the API, where routers and 
+       configurations are attached.
+------------------------------------------------------------
+
+# Includes the routers in the main application
+app.include_router(order_router)
+app.include_router(auth_router)
+
+    - "app.include_router(order_router)": attaches the order router to the main application.
+    - "app.include_router(auth_router)": attaches the authentication router to the main application.
+
+    - "include_router": FastAPI method that integrates a router into the main app, 
+      making its endpoints available.
+
+    - Key Concepts:
+       - "Router Inclusion": combining modular route definitions into the main app.
+       - "Endpoint Registration": makes the routes accessible via HTTP requests.
+       - "Scalability": allows large applications to be split into smaller, 
+         manageable modules.
+
+    - Purpose/Function in the code:
+       Integrates the imported routers into the main FastAPI application, 
+       enabling access to order-related and authentication-related endpoints.

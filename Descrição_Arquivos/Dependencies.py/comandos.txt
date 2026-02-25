@@ -1,0 +1,116 @@
+File Function
+---------
+Description: This section explains the functions defined in the file that act as 
+operational "commands" for database session management and token verification.
+
+Key Responsibilities:
+  - Manage database sessions safely using SQLAlchemy.
+  - Verify JWT tokens for authentication and extract user information.
+  - Ensure only valid and authorized users can access protected endpoints.
+
+------------------------------------------------------------
+Function: pegar_sessao()
+# dependency for the database session
+def pegar_sessao():
+    try:
+        session = sessionmaker(bind=db) # bind é o objeto que armazena a conexão com o banco de dados
+        session = session()
+        yield session
+    finally:    
+        session.close()
+
+Explanation:
+  - "sessionmaker(bind=db)": creates a session factory bound to the database connection object (db).
+        - "sessionmaker":The sessionmaker factory generates new Session objects when called, creating them given the configurational arguments established here.
+        - "bind=db": An optional Engine or Connection to which this Session should be bound. When specified, all SQL operations performed by this session will execute via this connectable, in this case, the connection is "db" imported from the "models" file.
+
+  - "session = session()": initializes a new session instance.
+        - "session": this is a variable that stores the session object, which is created by the sessionmaker function.
+        - "session()": create a new session object, it is usage for operations with the database (add, update, delete, etc.)
+           - example: session.add(new_user)
+
+  - "yield session": returns the session to the caller while keeping the function open 
+    (generator behavior).
+  - "finally: session.close()": ensures the session is closed after use, preventing leaks.
+
+Key Concepts:
+  - "Session": temporary connection to the database used for queries and transactions.
+  - "Dependency Injection": FastAPI can inject this session into routes automatically.
+  - "Yield": Python keyword that allows generator functions to return values without ending execution.
+
+Purpose/Function in the code:
+  Provides a reusable database session dependency for FastAPI routes, ensuring 
+  safe connection handling and automatic cleanup after each request.
+------------------------------------------------------------
+
+Function: verificar_token()
+# verifies the validity of a JWT token and retrieves the corresponding user
+
+def verificar_token(token:str = Depends(oauth2_scheme), session:Session = Depends(pegar_sessao)):
+    try:
+        dic_info  = jwt.decode(token, SECRET_KEY, ALGORITHM)
+        id_usuario = int(dic_info.get("sub"))
+        
+    except JWTError:
+         raise HTTPException(status_code=400, detail="Acesso negado,verifique a validade do token")
+    
+    usuario= session.query(Usuario).filter(Usuario.id == id_usuario).first()
+             
+    if not usuario:
+        raise HTTPException(status_code=401, detail="Acesso negado, usuário não encontrado")
+    return usuario
+
+Explanation:
+  - "token: str = Depends(oauth2_scheme)": retrieves the bearer token from the request header.
+        - "token:str": get a token created in "oauth2_scheme", and convert it to string
+           - we convert the token to string because the "jwt.decode" function requires a string as input
+
+        - "Depends(oauth2_scheme)":  this is a FastAPI utility that allows you to declare dependencies in your path operations, in this case, we are declaring a dependency on the "oauth2_scheme" object, which is defined in the "main" file.
+           - dependencies: makes the execution of a command dependent on the successful execution of another command, in this case, the "oauth2_scheme" object is required to decode the token.
+
+  - "session:  Session = Depends(pegar_sessao)": injects a database session dependency.
+        - "session": this is a variable that stores the session object, which is created by the "pegar_sessao" function.
+        - "Session": this is a class that represents a database session, it is used to query and persist data in the database.
+        - "Depends(pegar_sessao)": this is a FastAPI utility that allows you to declare dependencies in your path operations, in this case, we are declaring a dependency on the "pegar_sessao" function, which is defined in the "dependencies" file.
+           - dependencies: makes the execution of a command dependent on the successful execution of another command, in this case, the "pegar_sessao" function is required to create a new session object.
+
+  - "dic_info  =jwt.decode(token, SECRET_KEY, ALGORITHM)": decodes the token using the secret key and algorithm.
+        - "jwt.decode(token, SECRET_KEY, ALGORITHM)": this is a function from the "jose" library that decodes a JWT token and returns a dictionary with the decoded information.
+           - decoded information: the decoded token is a dictionary that contains the payload, header, and signature of the token.
+              - payload: contains the claims (information) of the token, such as the user ID, expiration time, and other data.
+              - header: contains information about the token, such as the algorithm used to sign it and the expiration time.
+              - signature: contains the signature of the token, which is used to verify its authenticity.
+
+  - "id_usuario = int(dic_info.get('sub'))": extracts the user ID from the token payload.
+        - "id_usuario": this is a variable that stores the user ID, which is extracted from the token payload.
+        - "dic_info.get('sub')": this is a method from the "dic_info" dictionary that retrieves the value associated with the key "sub", which is the user ID in the token payload.
+           - "dic_info": this is the decoded token dictionary that contains the payload, header, and signature of the token.
+           - "sub": this is the key in the payload dictionary that contains the user ID.
+        - "int()": this is a function that converts a string to an integer, it is used to convert the user ID from a string to an integer.
+            - we convert the user ID to an integer because the "session.query" function requires an integer as input.
+
+  - "except JWTError": handles invalid token errors by raising an HTTPException.    
+        - "JWTError": this is a custom exception class that is raised when a token is invalid or expired.
+
+  - "session.query(Usuario).filter(Usuario.id == id_usuario).first()": queries the database 
+    for the user with the extracted ID.
+        - "session.query(Usuario)": this is a method from the "session" object that returns a query object, which is used to query the database.
+             - "Usuario": this is a class that represents a user in the database, it is used to define the structure of the user data.
+        - "filter(Usuario.id == id_usuario)": this is a method from the "query" object that filters the results based on a condition, in this case, it filters the results to find a user with the specified ID.
+           - "Usuario.id": this is a property of the "Usuario" class that represents the primary key of the user table in the database.
+           - "id_usuario": this is the user ID that we extracted from the token payload.
+        - "first()": this is a method from the "query" object that returns the first result of the query, in this case, it returns the user object with the specified ID.
+           - if the user is not found, it will raise an exception, so we need to handle this exception.
+           
+  - "if not usuario": raises an HTTPException if the user is not found.
+  - "return usuario": returns the authenticated user object.
+
+Key Concepts:
+  - "JWT (JSON Web Token)": secure token format used for authentication.
+  - "Depends": FastAPI utility for dependency injection.
+  - "HTTPException": FastAPI exception for returning HTTP error responses.
+  - "Usuario": database model representing the user table.
+
+Purpose/Function in the code:
+  Ensures that only requests with valid JWT tokens and existing users in the database 
+  are authorized. Provides user identity to protected routes, enabling secure access control.

@@ -1,0 +1,84 @@
+FastAPI
+--------
+Library: fastapi
+Description: FastAPI is a modern, high-performance web framework for building APIs with Python. 
+It is designed around Python type hints and provides automatic interactive documentation (Swagger UI, ReDoc).
+Official Documentation: https://fastapi.tiangolo.com
+
+Function: FastAPI
+Description: The FastAPI class is used to create an application instance. 
+This instance is the core of your API, where you define routes, middleware, and configurations.
+
+Key Concepts:
+- ASGI: FastAPI is built on ASGI (Asynchronous Server Gateway Interface), enabling async support.
+- Dependency Injection: FastAPI allows you to declare dependencies that are automatically resolved.
+- Automatic Docs: Interactive API docs are generated from type hints and decorators.
+
+------------------------------------------------------------
+
+Passlib
+--------
+Library: passlib.context
+Description: Passlib is a password hashing library for Python. It supports many secure hashing algorithms 
+and provides tools for managing password storage and verification.
+Official Documentation: https://passlib.readthedocs.io/en/stable/
+
+Function: CryptContext
+Description: CryptContext is a configuration object that defines which hashing algorithms to use, 
+how to verify passwords, and how to migrate old hashes to new schemes.
+
+Key Concepts:
+- Hashing: One-way transformation of a password into a secure string.
+- Schemes: Algorithms like bcrypt, argon2, sha256_crypt.
+- Verification: Checking if a given password matches a stored hash.
+
+------------------------------------------------------------
+
+FastAPI Security
+-----------------
+Library: fastapi.security
+Description: Provides security utilities for authentication and authorization in FastAPI applications.
+Official Documentation: https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/
+
+Function: OAuth2PasswordBearer
+Description: A dependency class that defines how to retrieve a bearer token from the request header. 
+It is commonly used in OAuth2 authentication flows.
+
+Key Concepts:
+- OAuth2: An authorization framework for secure delegated access.
+- Bearer Token: A token passed in the Authorization header to prove identity.
+- Dependency Injection: FastAPI uses this class as a dependency to enforce authentication.
+
+------------------------------------------------------------
+
+Python-Dotenv
+--------------
+Library: dotenv
+Description: Python-Dotenv loads environment variables from a `.env` file into the system environment. 
+This helps keep secrets and configuration outside of the codebase.
+Official Documentation: https://pypi.org/project/python-dotenv/
+
+Function: load_dotenv
+Description: Reads the `.env` file and loads its key-value pairs into environment variables accessible via `os.environ`.
+
+Key Concepts:
+- Environment Variables: Key-value pairs used for configuration (e.g., DATABASE_URL, SECRET_KEY).
+- Separation of Concerns: Keeps sensitive data out of source code.
+- Configuration Management: Simplifies switching between development, testing, and production.
+
+------------------------------------------------------------
+
+OS Module
+----------
+Library: os
+Description: The `os` module provides a portable way of interacting with the operating system. 
+It includes functions for file paths, process management, and environment variables.
+Official Documentation: https://docs.python.org/3/library/os.html
+
+Function: (general usage)
+Description: Commonly used to access environment variables (`os.getenv`, `os.environ`) and manage file paths.
+
+Key Concepts:
+- Environment Variables: Used to store configuration and secrets.
+- File System Operations: Functions like `os.path.join`, `os.remove`, `os.listdir`.
+- Portability: Ensures code runs across different operating systems.
