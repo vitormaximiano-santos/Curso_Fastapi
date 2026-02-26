@@ -96,9 +96,11 @@ Explanation:
     for the user with the extracted ID.
         - "session.query(Usuario)": this is a method from the "session" object that returns a query object, which is used to query the database.
              - "Usuario": this is a class that represents a user in the database, it is used to define the structure of the user data.
+
         - "filter(Usuario.id == id_usuario)": this is a method from the "query" object that filters the results based on a condition, in this case, it filters the results to find a user with the specified ID.
            - "Usuario.id": this is a property of the "Usuario" class that represents the primary key of the user table in the database.
            - "id_usuario": this is the user ID that we extracted from the token payload.
+           
         - "first()": this is a method from the "query" object that returns the first result of the query, in this case, it returns the user object with the specified ID.
            - if the user is not found, it will raise an exception, so we need to handle this exception.
            

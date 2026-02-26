@@ -1,0 +1,61 @@
+db = create_engine('sqlite:///banco.db'): is the line that initializes the engine, which allows all ORM operations to function.
+                - ORM operations:  is a technique that connects Python classes/objects with database tables/rows.
+                                   Instead of writing raw SQL, you interact with the database using Python objects and methods.
+                                   In SQLAlchemy, ORM lets you treat tables as classes and rows as instances.
+
+        - "db": is the variable that store the connection with the database created with "create_engine" .
+
+        - "create_engine": create a new Engine instance.
+                - Engine: is the central object in SQLAlchemy responsible for managing the connection to the database,
+                          It does not execute queries directly, 
+                          but provides the infrastructure for connections to be created and used,
+                          It is like the “engine” that translates Python calls into SQL commands
+                          and sends them to the database.
+
+        - "('sqlite:///banco.db')": is the connection string that tells SQLAlchemy to use a local SQLite database stored in the file banco.db.
+                - sqlite → the dialect, meaning you’re using SQLite.
+
+                - ///banco.db → three slashes indicate a relative path to a file named banco.db in your project directory.
+                        - If you used sqlite:////absolute/path/to/banco.db, that would be an absolute path.
+
+                - So this URL tells SQLAlchemy:  “Use SQLite, and store the database in a file called banco.db in the current folder.”
+
+
+Base = declarative_base():
+
+        - "Base": variable that stores the declarative_base
+
+        - "declarative_base": It is a function in SQLAlchemy that creates a base class for the ORM mapping system.
+                              This class serves as the foundation for all your model classes (such as Usuario, Pedido, ItemPedido).
+                              When you write class Usuario(Base):, you are declaring that Usuario is a table mapped in the database, inheriting from the Base class.
+
+        - WHAT DOES Base DO?
+            - Maintains the metadata of all tables (names, columns, relationships).
+            - Allows SQLAlchemy to know which classes should be transformed into tables in the database.
+            - Centralizes the schema definition, so you can create all tables with a single command:
+
+    EXAMPLE IN YOUR PROJECT
+
+    from sqlalchemy.orm import declarative_base
+
+    Base = declarative_base()
+
+    class Usuario(Base):
+        __tablename__ = "usuarios"
+        id = Column(Integer, primary_key=True)
+        nome = Column(String)
+
+    Explanation:
+    - Usuario is a Python class, but it is also mapped as a SQL table named "usuarios".
+    - The Base object is what connects this class to the SQLAlchemy ORM system.
+
+    WHAT THE CONNECTION CREATED IN Base CAN DO
+    - Base acts as the root class for all ORM models in your project.
+    - Any class that inherits from Base becomes both:
+    1. A Python class (usable in your code).
+    2. A mapped database table (usable in SQL).
+    - Base collects metadata about all models (tables, columns, relationships).
+    - Through Base.metadata, you can manage the entire database schema:
+    - Create tables: Base.metadata.create_all(engine)
+    - Drop tables: Base.metadata.drop_all(engine)
+    - This means Base is the central link between your Python code and the database structure.

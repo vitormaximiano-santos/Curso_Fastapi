@@ -1,0 +1,61 @@
+SQLAlchemy
+-----------
+Library: sqlalchemy
+Description: SQLAlchemy is a powerful Python library for working with relational databases. 
+It provides both a Core (SQL expression language) and an ORM (Object Relational Mapper) 
+to interact with databases using Python objects.
+Official Documentation: https://www.sqlalchemy.org/
+
+Functions:
+- create_engine
+  Description: Creates a new database engine, which manages the connection pool 
+  and database dialect (e.g., PostgreSQL, MySQL, SQLite).
+- Column
+  Description: Defines a column in a database table, including its type and constraints.
+- String, Integer, Boolean, Float
+  Description: Data types used to define the type of values stored in table columns.
+- ForeignKey
+  Description: Defines a relationship between tables by linking a column to another table’s primary key.
+
+Key Concepts:
+- Engine: Central object that manages database connections.
+- Column Types: Specify the kind of data stored (text, numbers, booleans, etc.).
+- Constraints: Rules applied to columns (e.g., primary key, foreign key).
+- Relational Mapping: Links between tables using foreign keys.
+
+------------------------------------------------------------
+
+SQLAlchemy ORM
+---------------
+Library: sqlalchemy.orm
+Description: SQLAlchemy ORM allows developers to work with databases using Python classes 
+instead of raw SQL queries. It maps Python objects to database tables.
+Official Documentation: https://docs.sqlalchemy.org/en/20/orm/
+
+Functions:
+- declarative_base
+  Description: Factory function that creates a base class for ORM models. 
+  All model classes inherit from this base to be mapped to database tables.
+- relationship
+  Description: Defines relationships between ORM models (e.g., one-to-many, many-to-many).
+
+Key Concepts:
+- Declarative Mapping: Using Python classes to represent database tables.
+- Relationships: Linking models together to represent associations between tables.
+- Session: Manages transactions and queries in the ORM.
+
+------------------------------------------------------------
+
+SQLAlchemy Utils (optional)
+----------------------------
+Library: sqlalchemy_utils.types
+Description: SQLAlchemy-Utils is an extension library that provides additional types and utilities.
+Official Documentation: https://sqlalchemy-utils.readthedocs.io/en/latest/
+
+Function: ChoiceType
+Description: Allows defining a column with a fixed set of choices (like an enum), 
+ensuring only valid options are stored.
+
+Key Concepts:
+- ChoiceType: Useful for fields with predefined options (e.g., status = ["active", "inactive"]).
+- Validation: Ensures data integrity by restricting values to a defined set.
