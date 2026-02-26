@@ -1,0 +1,118 @@
+------------------------------------------------------------
+Explanation
+------------------------------------------------------------
+
+Class definition
+- class Usuario(Base): Creates the class "Usuario".
+- Inheriting from Base maps this class to a database table with the defined columns.
+
+Table name
+- __tablename__ = "usuarios": Defines the name of the table in the database as "usuarios".
+
+Columns
+- id = Column(Integer, primary_key=True, autoincrement=True)
+  - id: Represents the column in the table.
+  - Column: Declares this attribute as a database column.
+  - Integer: Specifies that the column stores integer values.
+    - Defining data types (int, float, string, boolean) ensures data integrity,
+      optimizes storage, and allows specific operations (e.g., math on integers,
+      text searches on strings).
+  - primary_key=True: Marks this column as the primary key.
+    - Ensures each row is unique, not null, and identifiable.
+    - Enables relationships with other tables through foreign keys.
+  - autoincrement=True: Automatically generates sequential numeric values for new rows.
+    - Eliminates the need to manually assign IDs.
+
+- email = Column(String, nullable=False)
+  - Creates the column "email" as a string.
+  - nullable=False: Makes this field mandatory, meaning it cannot be empty or null.
+
+- admin = Column(Boolean, default=False)
+  - Creates the column "admin" as a boolean.
+  - default=False: Sets the default value to False (i.e., not an admin).
+
+Constructor
+- def __init__(self, nome, email, senha, ativo, admin=False):
+  - Initializes the object with the given values.
+  - Assigns parameters (nome, email, senha, ativo, admin) to instance variables.
+  - These variables are stored in the corresponding table columns.
+  - Allows the object to be used in operations elsewhere in the code.
+
+------------------------------------------------------------
+
+Class definition
+- class Pedido(Base): Creates the class "Pedido".
+- Inheriting from Base maps this class to a database table with the defined columns.
+
+Table name
+- __tablename__ = "pedidos": Defines the name of the table in the database as "pedidos".
+
+Columns
+- id = Column("id", Integer, primary_key=True, autoincrement=True)
+  - Same logic as in Usuario: primary key, integer type, autoincrement.
+
+- status = Column("status", String)
+  - Creates the column "status" as a string.
+  - Intended to store the current state of the order (e.g., Pendente, Cancelado, Finalizado).
+
+- usuario = Column("usuario", ForeignKey("usuarios.id"))
+  - Defines a foreign key relationship.
+  - Links each order to a user in the "usuarios" table.
+  - Ensures referential integrity between orders and users.
+
+- preco = Column("preco", Float)
+  - Creates the column "preco" as a float.
+  - Stores the total price of the order.
+
+- itens = relationship("ItemPedido", cascade="all, delete")
+  - Defines a relationship with the "ItemPedido" class.
+  - Cascade="all, delete": ensures that when a Pedido is deleted, all associated ItemPedido records are also deleted.
+
+Constructor
+- def __init__(self, usuario, status="Pendente", preco=0):
+  - Initializes the object with default values.
+  - usuario: links the order to a user.
+  - status: defaults to "Pendente".
+  - preco: defaults to 0.
+
+Method
+- def calcular_preco(self):
+  - Calculates the total price of the order.
+  - Uses a list comprehension to sum (preco_unitario * quantidade) for each item in the order.
+
+------------------------------------------------------------
+
+Class definition
+- class ItemPedido(Base): Creates the class "ItemPedido".
+- Inheriting from Base maps this class to a database table with the defined columns.
+
+Table name
+- __tablename__ = "itenspedidos": Defines the name of the table in the database as "itenspedidos".
+
+Columns
+- id = Column("id", Integer, primary_key=True, autoincrement=True)
+  - Same logic as in Usuario and Pedido.
+
+- quantidade = Column("quantidade", Integer)
+  - Stores the quantity of the item.
+
+- sabor = Column("sabor", String)
+  - Stores the flavor of the item.
+
+- tamanho = Column("tamanho", String)
+  - Stores the size of the item.
+
+- preco_unitario = Column(Float)
+  - Stores the unit price of the item.
+
+- pedido = Column(Integer, ForeignKey("pedidos.id"))
+  - Defines a foreign key relationship.
+  - Links each item to a specific order in the "pedidos" table.
+
+Constructor
+- def __init__(self, quantidade, sabor, tamanho, preco_unitario, pedido):
+  - Initializes the item with its attributes.
+  - Links the item to its associated order via the foreign key.
+
+------------------------------------------------------------
+
