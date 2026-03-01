@@ -1,0 +1,37 @@
+File: dependencies.py
+Purpose: Define FastAPI dependencies for database sessions and token verification.
+
+Features:
+
+1. Imports:
+   - fastapi.Depends, HTTPException: Used for dependency injection and error handling.
+   - main.SECRET_KEY, ALGORITHM, oauth2_scheme: Security settings and OAuth2 scheme from main.py.
+   - models.db: Database connection object.
+   - sqlalchemy.orm.sessionmaker, Session: Manage database sessions.
+   - models.Usuario: User model for authentication checks.
+   - jose.jwt, JWTError: For decoding and validating JWT tokens.
+
+2. Database Dependency:
+   - Function: pegar_sessao()
+   - Creates a session using sessionmaker bound to db.
+   - Uses `yield` to provide session to request handlers.
+   - Ensures session is closed after use.
+   - Purpose: Provides a database session to routes via dependency injection.
+
+3. Token Verification Dependency:
+   - Function: verificar_token(token: str = Depends(oauth2_scheme), session: Session = Depends(pegar_sessao))
+   - Steps:
+     - Decodes JWT token using SECRET_KEY and ALGORITHM.
+     - Extracts user ID ("sub") from token payload.
+     - Queries database for corresponding Usuario.
+     - Raises HTTPException if token is invalid or user not found.
+     - Returns Usuario object if valid.
+   - Purpose: Ensures secure access by validating tokens and checking user existence.
+
+General Notes:
+- Dependencies are designed for FastAPI routes to automatically inject database sessions and authenticated users.
+- JWT tokens are central to authentication, with user ID stored in the "sub" claim.
+- Error handling:
+  - 400 → Invalid token
+  - 401 → User not found
+- This file connects **security (JWT/OAuth2)** with **database persistence (SQLAlchemy)**.

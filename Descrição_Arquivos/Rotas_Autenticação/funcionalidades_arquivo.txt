@@ -1,0 +1,52 @@
+File: rotas_autenticacao.py
+Purpose: Define FastAPI routes for user authentication (account creation, login, token management).
+
+Features:
+
+1. Imports:
+   - fastapi.APIRouter, HTTPException, Depends: For route creation, error handling, and dependency injection.
+   - models.Usuario: SQLAlchemy user model.
+   - dependencies.pegar_sessao, verificar_token: Database session and token verification dependencies.
+   - main.bcript_context, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY: Security settings and password hashing.
+   - schemas.SchemaUsuario, SchemaLogin: Pydantic schemas for request validation.
+   - sqlalchemy.orm.Session: Database session management.
+   - jose.jwt, JWTError: JWT encoding/decoding and error handling.
+   - datetime, timedelta, timezone: Token expiration handling.
+   - fastapi.security.OAuth2PasswordRequestForm: OAuth2 login form support.
+
+2. Helper Functions:
+   - criar_token(id_usuario, duracao_token): Creates JWT token with expiration and user ID ("sub").
+   - autenticar_usuario(email, senha, session): Validates user credentials against database and bcrypt-hashed password.
+
+3. Router Setup:
+   - auth_router = APIRouter(prefix="/auth", tags=["auth"])
+   - Prefix: "/auth"
+   - Tags: "auth"
+   - Purpose: Organize authentication-related routes.
+
+4. Routes:
+   - GET "/": Returns a message confirming access to /auth.
+   - POST "/Criar_Conta": Creates a new user account.
+     - Checks if email already exists.
+     - Hashes password with bcrypt.
+     - Saves new user to database.
+   - POST "/Login": Authenticates user with SchemaLogin.
+     - Returns access_token (short-lived) and refresh_token (long-lived).
+   - POST "/Login_form": Authenticates user via OAuth2PasswordRequestForm.
+     - Returns access_token.
+   - GET "/refresh": Issues a new access_token using a valid refresh token (requires verificar_token).
+
+5. Security:
+   - Passwords are hashed with bcrypt (via passlib CryptContext).
+   - JWT tokens include:
+     - "sub": user ID
+     - "exp": expiration time
+   - Access tokens expire based on ACCESS_TOKEN_EXPIRE_MINUTES.
+   - Refresh tokens last longer (default: 7 days).
+
+General Notes:
+- This file defines the **authentication API layer**.
+- Supports both JSON-based login and OAuth2 form-based login.
+- Implements account creation, login, and token refresh.
+- Integrates with SQLAlchemy models for persistence and Pydantic schemas for validation.
+- Ensures secure password storage and token-based authentication.

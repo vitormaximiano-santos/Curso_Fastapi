@@ -1,0 +1,41 @@
+CLASS CONFIG IN PYDANTIC MODELS
+
+1. What is Config?
+- In Pydantic, you can define an inner class named "Config" inside your BaseModel.
+- This class is used to configure how the model behaves.
+- It allows customization of validation, serialization, and integration with other systems.
+
+2. Example in Your Project
+class SchemaUsuario(BaseModel):
+    nome: str
+    email: str
+    senha: str
+    ativo: Optional[bool]
+    admin: Optional[bool]
+
+    class Config:
+        from_attributes = True
+
+Explanation:
+- The inner class "Config" modifies the behavior of SchemaUsuario.
+- "from_attributes = True" tells Pydantic to allow model creation directly from ORM objects (like SQLAlchemy models).
+- This means you can pass a SQLAlchemy object to SchemaUsuario and Pydantic will read its attributes.
+
+3. What "from_attributes = True" Does
+- Normally, Pydantic expects data in dictionary form (e.g., {"nome": "Vitor"}).
+- With from_attributes = True, Pydantic can also accept objects with attributes.
+- Example:
+    usuario_obj = Usuario(nome="Vitor", email="vitor@example.com", senha="123", ativo=True, admin=False)
+    schema_usuario = SchemaUsuario.model_validate(usuario_obj)
+- Here, SchemaUsuario reads the attributes directly from the Usuario ORM object.
+
+4. Why This is Useful
+- Seamless integration between Pydantic and SQLAlchemy.
+- Avoids manual conversion of ORM objects into dictionaries.
+- Makes FastAPI responses easier: you can return ORM objects and let Pydantic handle serialization.
+
+5. Summary
+- The inner Config class customizes model behavior.
+- from_attributes = True enables ORM mode, allowing Pydantic models to be built from ORM objects.
+- This bridges the gap between database models (SQLAlchemy) and API schemas (Pydantic).
+

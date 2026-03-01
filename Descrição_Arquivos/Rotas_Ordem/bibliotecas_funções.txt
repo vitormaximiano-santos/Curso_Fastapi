@@ -1,0 +1,97 @@
+FastAPI
+--------
+Library: fastapi
+Description: FastAPI is a modern, high-performance web framework for building APIs with Python. 
+It is designed around Python type hints and provides automatic interactive documentation (Swagger UI, ReDoc).
+Official Documentation: https://fastapi.tiangolo.com
+
+Function: APIRouter, Depends, HTTPException
+Description: 
+- APIRouter: Allows modular route definitions that can be included in the main application.
+- Depends: Implements dependency injection, automatically resolving functions or classes as parameters.
+- HTTPException: Used to raise errors with custom status codes and messages.
+
+Key Concepts:
+- Modular Routing: Organize routes into separate files for maintainability.
+- Dependency Injection: Simplifies passing sessions, tokens, or other shared resources into routes.
+- Error Handling: Raise HTTPException to return structured error responses.
+
+------------------------------------------------------------
+
+SQLAlchemy ORM
+---------------
+Library: sqlalchemy.orm
+Description: SQLAlchemy ORM provides tools for mapping Python classes to database tables and managing sessions.
+Official Documentation: https://docs.sqlalchemy.org/en/20/orm/
+
+Function: Session
+Description: Represents a database session for querying and persisting objects.
+
+Key Concepts:
+- ORM Mapping: Classes like Pedido, Usuario, and ItemPedido map to database tables.
+- Session Lifecycle: Sessions are created, used, and closed to interact with the database.
+- Querying: Provides methods to filter, retrieve, and manipulate database records.
+
+------------------------------------------------------------
+
+Dependencies (Custom)
+----------------------
+Module: dependencies
+Description: Custom module that defines reusable FastAPI dependencies for database sessions and token verification.
+
+Functions:
+- pegar_sessao: Provides a database session via dependency injection.
+- verificar_token: Validates JWT tokens and retrieves the authenticated user.
+
+Key Concepts:
+- Dependency Injection: Ensures routes automatically receive sessions and authenticated users.
+- Security: Centralized token verification for protected routes.
+
+------------------------------------------------------------
+
+Pydantic Schemas
+-----------------
+Library: schemas (custom module using pydantic)
+Description: Defines data validation and serialization models for requests and responses.
+
+Schemas:
+- SchemaPedido: Represents order creation data.
+- SchemaItemPedido: Represents individual order item data.
+- SchemaUsuario: Represents user data.
+- SchemaResponsePedido: Represents structured response for orders.
+
+Key Concepts:
+- Validation: Ensures incoming request data matches expected types.
+- Serialization: Converts Python objects into JSON responses.
+- Integration: Works seamlessly with FastAPI for request/response handling.
+
+------------------------------------------------------------
+
+SQLAlchemy Models
+------------------
+Module: models (custom)
+Description: Defines database tables and relationships using SQLAlchemy ORM.
+
+Models:
+- Pedido: Represents orders.
+- Usuario: Represents users.
+- ItemPedido: Represents order items.
+
+Key Concepts:
+- Persistence: Maps Python objects to database tables.
+- Relationships: Pedido linked to Usuario and ItemPedido.
+- Business Logic: Methods like calcular_preco handle domain-specific operations.
+
+------------------------------------------------------------
+
+Typing
+-------
+Library: typing
+Description: Provides type hints for Python, improving readability and validation.
+
+Function: List
+Description: Used to declare lists of objects, e.g., response_model=List[SchemaResponsePedido].
+
+Key Concepts:
+- Type Hints: Improve code clarity and enable static analysis.
+- Integration: FastAPI uses type hints to generate documentation and validate inputs/outputs.

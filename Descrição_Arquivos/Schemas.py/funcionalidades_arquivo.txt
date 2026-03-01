@@ -1,0 +1,38 @@
+File: schemas.py
+Purpose: Define data models using Pydantic's BaseModel for validation, serialization, and integration with FastAPI.
+
+Features:
+
+1. Imports:
+   - pydantic.BaseModel: Provides data validation and serialization.
+   - typing.Optional, typing.List: Used for optional fields and lists.
+
+2. SchemaUsuario:
+   - Fields: nome (str), email (str), senha (str), ativo (Optional[bool]), admin (Optional[bool])
+   - Purpose: Represents user data model.
+   - Config: from_attributes = True (allows using model attributes as field names)
+
+3. SchemaPedido:
+   - Fields: usuario (int)
+   - Purpose: Represents a request/order linked to a user.
+   - Config: from_attributes = True
+
+4. SchemaLogin:
+   - Fields: email (str), senha (str)
+   - Purpose: Represents login credentials.
+   - Config: from_attributes = True
+
+5. SchemaItemPedido:
+   - Fields: quantidade (int), sabor (str), tamanho (str), preco_unitario (float)
+   - Purpose: Represents individual items in an order.
+   - Config: from_attributes = True
+
+6. SchemaResponsePedido:
+   - Fields: id (int), status (str), preco (float), itens (List[SchemaItemPedido])
+   - Purpose: Represents the response structure for an order, including items.
+   - Config: from_attributes = True
+
+General Notes:
+- All schemas inherit from Pydantic's BaseModel for automatic validation and serialization.
+- Config option `from_attributes = True` ensures compatibility with ORM models.
+- Models are designed for use in APIs (likely FastAPI) to handle user, login, order, and item data.

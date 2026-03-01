@@ -1,0 +1,49 @@
+File: rotas_ordem.py
+Purpose: Define FastAPI routes for managing orders (pedidos) with authentication and authorization.
+
+Features:
+
+1. Imports:
+   - fastapi.APIRouter, Depends, HTTPException: For route creation, dependency injection, and error handling.
+   - sqlalchemy.orm.Session: Database session management.
+   - dependencies.pegar_sessao, verificar_token: Inject DB session and verify JWT tokens.
+   - schemas.SchemaPedido, SchemaItemPedido, SchemaUsuario, SchemaResponsePedido: Pydantic schemas for request/response validation.
+   - models.Pedido, Usuario, ItemPedido: SQLAlchemy models for persistence.
+   - typing.List: Used for response models with lists.
+
+2. Router Setup:
+   - order_router = APIRouter(prefix="/pedidos", tags=["pedidos"], dependencies=[Depends(verificar_token)])
+   - Prefix: "/pedidos"
+   - Tags: "pedidos"
+   - Dependency: Requires valid token for all routes.
+
+3. Routes:
+   - GET "/": Returns a simple message confirming access to /pedidos.
+   - POST "/pedido": Creates a new Pedido linked to a user.
+   - POST "/pedido/cancelar/{id_pedido}": Cancels a specific Pedido if user is admin or owner.
+   - GET "/listar_pedidos": Lists all Pedidos (admin-only).
+   - POST "/pedido/adicionar_item/{id_pedido}": Adds an ItemPedido to a Pedido (admin or owner).
+   - POST "/pedido/remover_item/{id_pedido}": Removes an ItemPedido from a Pedido (admin or owner).
+   - POST "/pedido/finalizar/{id_pedido}": Finalizes a Pedido (admin or owner).
+   - GET "/pedido/{id_pedido}": Views details of a Pedido (admin or owner).
+   - GET "/listar/pedidos-usuario": Lists all Pedidos for the authenticated user (response model: List[SchemaResponsePedido]).
+
+4. Authorization Rules:
+   - Admin users can manage all orders.
+   - Regular users can only manage their own orders.
+   - Unauthorized actions raise HTTPException with status codes:
+     - 400 → Pedido not found
+     - 401 → Permission denied
+     - 404 → Pedido not found (specific cases)
+
+5. Business Logic:
+   - Pedido creation links to a user.
+   - Pedido cancellation, finalization, and item management update status and recalculate price.
+   - Uses SQLAlchemy session for persistence (add, commit, delete).
+   - Integrates with Pydantic schemas for request validation and structured responses.
+
+General Notes:
+- This file defines the **order management API layer**.
+- Security is enforced via JWT token verification (verificar_token).
+- Routes are modularized under the "/pedidos" prefix.
+- Admin vs. user permissions are consistently checked before modifying or viewing orders.

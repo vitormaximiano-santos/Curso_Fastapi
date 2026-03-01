@@ -1,0 +1,57 @@
+File: models.py
+Purpose: Define database models using SQLAlchemy ORM for a SQLite database.
+
+Features:
+
+1. Imports:
+   - sqlalchemy.create_engine: Creates database connection.
+   - sqlalchemy.Column, String, Integer, Boolean, Float, ForeignKey: Define table columns and types.
+   - sqlalchemy.orm.declarative_base, relationship: Base class for models and relationships.
+
+2. Database Setup:
+   - db = create_engine('sqlite:///banco.db'): Connects to SQLite database file "banco.db".
+   - Base = declarative_base(): Base class for all ORM models.
+
+3. Usuario (users table):
+   - Table name: "usuarios"
+   - Columns:
+     - id (Integer, PK, autoincrement)
+     - nome (String)
+     - email (String, not nullable)
+     - senha (String)
+     - ativo (Boolean)
+     - admin (Boolean, default=False)
+   - Constructor: initializes user attributes.
+   - Purpose: Represents system users.
+
+4. Pedido (orders table):
+   - Table name: "pedidos"
+   - Columns:
+     - id (Integer, PK, autoincrement)
+     - status (String)
+     - usuario (ForeignKey → usuarios.id)
+     - preco (Float)
+   - Relationship: itens → ItemPedido (cascade delete)
+   - Constructor: initializes order with user, status (default "Pendente"), and price.
+   - Method: calcular_preco() → calculates total price by summing item quantities × unit price.
+   - Purpose: Represents orders linked to users.
+
+5. ItemPedido (order items table):
+   - Table name: "itenspedidos"
+   - Columns:
+     - id (Integer, PK, autoincrement)
+     - quantidade (Integer)
+     - sabor (String)
+     - tamanho (String)
+     - preco_unitario (Float)
+     - pedido (ForeignKey → pedidos.id)
+   - Constructor: initializes item attributes.
+   - Purpose: Represents individual items in an order.
+
+General Notes:
+- Models use SQLAlchemy ORM for object-relational mapping.
+- Relationships:
+  - Pedido → ItemPedido (one-to-many).
+  - Pedido → Usuario (many-to-one via ForeignKey).
+- Constructors simplify object creation.
+- Method calcular_preco ensures dynamic calculation of order totals.

@@ -1,0 +1,51 @@
+class SchemaUsuario(BaseModel): 
+    
+    nome : str
+    email : str
+    senha : str
+    ativo : Optional[bool]
+    admin : Optional[bool]
+
+    class Config:
+        from_attributes = True
+
+    - class SchemaUsuario(BaseModel): 
+            - "class SchemaUsuario": creates a class called "SchemaUsuario" 
+            - "(BaseModel)": A base class for creating Pydantic models.
+                    - Pydantic models:  provide type validation, serialization, and schema generation.
+
+    
+    - "nome : str 
+      email : str
+      senha : str ": defines that the data in the “name, email, password” fields must be of type String.
+
+    - "ativo : Optional[bool]
+       admin : Optional[bool]": 
+            - Optional[X] is shorthand for Union[X, None].
+
+                It means that the field can either be of type X (in this case bool) or it can be None.
+                So:
+                ativo: Optional[bool] → the field can be True, False, or None.
+                admin: Optional[bool] → the field can be True, False, or None.
+
+
+    
+    - "class Config:
+        from_attributes = True": makes your Pydantic model capable of reading data directly from SQLAlchemy ORM objects,   
+                                 not just plain dictionaries. This is what allows FastAPI to return ORM results as 
+                                 JSON responses automatically.
+
+
+
+- class SchemaResponsePedido(BaseModel):
+    id: int
+    status: str
+    preco: float
+    itens : List[SchemaItemPedido]
+    
+    class Config:
+        from_attributes = True                                 
+
+                - " itens : List[SchemaItemPedido]": means that "itens" must be a list (Python list type).
+                            Each element inside the list must be an object of type SchemaItemPedido.
+                            SchemaItemPedido is another Pydantic model that defines the structure of an item (fields like quantidade, sabor, tamanho, preco_unitario).

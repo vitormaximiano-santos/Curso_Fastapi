@@ -1,0 +1,91 @@
+PYDANTIC MODELS — FEATURES AND LOGIC
+
+1. What is a Pydantic Model?
+- A model is a Python class that inherits from BaseModel.
+- Fields are defined as annotated attributes (using Python typing).
+- Models act like "schemas" that validate and serialize data.
+- They are similar to dataclasses, but with built-in validation, serialization, and JSON schema generation.
+
+2. Validation
+- "Validation" in Pydantic means parsing input data into a model instance that conforms to the declared types.
+- If data does not match the expected type, a ValidationError is raised.
+- Example:
+    from pydantic import BaseModel
+    class User(BaseModel):
+        id: int
+        name: str = "Jane Doe"
+    user = User(id="123")  # id will be coerced to int
+
+3. Basic Usage
+- Fields can have default values.
+- Validation occurs automatically when instantiating the model.
+- Attributes can be accessed normally:
+    assert user.name == "Jane Doe"
+    assert user.id == 123
+
+4. Serialization
+- model_dump() → returns a dictionary of fields and values.
+- model_dump_json() → returns a JSON string.
+- dict() → also works, but nested models are not fully converted.
+
+5. Mutability
+- By default, models are mutable.
+- You can change field values after creation:
+    user.id = 321
+
+6. Model Methods
+- model_validate(): validate data against the model.
+- model_validate_json(): validate JSON data.
+- model_construct(): create models without validation.
+- model_dump(): serialize to dict.
+- model_dump_json(): serialize to JSON.
+- model_copy(): duplicate models.
+- model_json_schema(): generate JSON Schema.
+- model_rebuild(): rebuild schema for recursive or generic models.
+
+7. Data Conversion
+- Pydantic may coerce input data to match field types.
+- Example: strings can be converted to numbers if the field type is int or float.
+- Strict mode can be enabled to prevent coercion.
+
+8. Extra Data
+- By default, extra fields are ignored.
+- Config options:
+    - ignore → extra data is ignored.
+    - forbid → extra data raises an error.
+    - allow → extra data is stored in __pydantic_extra__.
+
+9. Nested Models
+- Models can be nested inside other models.
+- Example:
+    class Foo(BaseModel):
+        count: int
+    class Bar(BaseModel):
+        foo: Foo
+    bar = Bar(foo={"count": 4})
+
+10. Error Handling
+- ValidationError contains details about all errors found.
+- Example:
+    class Model(BaseModel):
+        list_of_ints: list[int]
+    Model(list_of_ints=["bad"]) → raises error.
+
+11. ORM Integration
+- Pydantic can validate ORM objects (e.g., SQLAlchemy models).
+- Enable with from_attributes=True in ConfigDict.
+- This allows direct conversion of ORM instances into Pydantic models.
+
+12. Generic Models
+- Pydantic supports generics for reusable structures.
+- Example:
+    from typing import TypeVar, Generic
+    T = TypeVar("T")
+    class Response(BaseModel, Generic[T]):
+        data: T
+    Response[int](data=1)
+
+SUMMARY
+- Pydantic models provide type validation, serialization, and schema generation.
+- They ensure that data conforms to declared types.
+- They integrate seamlessly with FastAPI, making request/response validation automatic.

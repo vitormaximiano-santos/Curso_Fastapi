@@ -1,0 +1,43 @@
+File: main.py
+Purpose: Initialize FastAPI application, configure authentication, and include routers.
+
+Features:
+
+1. Imports:
+   - fastapi.FastAPI: Creates the FastAPI application.
+   - passlib.context.CryptContext: Provides password hashing (bcrypt).
+   - fastapi.security.OAuth2PasswordBearer: Implements OAuth2 authentication scheme.
+   - dotenv.load_dotenv: Loads environment variables from .env file.
+   - os: Accesses environment variables.
+
+2. Environment Variables:
+   - SECRET_KEY: Loaded from .env
+   - ALGORITHM: Loaded from .env
+   - ACCESS_TOKEN_EXPIRE_MINUTES: Loaded from .env and converted to int
+   - Purpose: Used for JWT token generation and authentication.
+
+3. FastAPI Application:
+   - app = FastAPI(): Creates the main application instance.
+   - Run command: `uvicorn main:app --reload`
+     - uvicorn: ASGI server
+     - main:app: Refers to the FastAPI instance
+     - --reload: Enables auto-reload on file changes
+
+4. Security:
+   - bcript_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+     - Provides bcrypt hashing for passwords.
+   - oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/Login_form")
+     - Defines OAuth2 authentication flow with token endpoint.
+
+5. Routers:
+   - from rotas_ordem import order_router
+   - from rotas_autenticacao import auth_router
+   - app.include_router(order_router)
+   - app.include_router(auth_router)
+   - Purpose: Modularize routes for orders and authentication.
+
+General Notes:
+- The file sets up the **application entry point** for FastAPI.
+- Security is handled via bcrypt (password hashing) and OAuth2 (token-based authentication).
+- Environment variables ensure sensitive data (keys, algorithms, expiration times) are not hardcoded.
+- Routers provide separation of concerns: one for order management, another for authentication.

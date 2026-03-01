@@ -1,0 +1,37 @@
+Pydantic BaseModel
+------------------
+Library: pydantic
+Description: Pydantic is a Python library for creating data models with validation and serialization.
+Official Documentation: https://docs.pydantic.dev/
+
+Class: BaseModel
+Description: A base class provided by Pydantic to define data models.
+- It automatically validates input data against type hints.
+- Provides serialization and deserialization (e.g., converting to/from JSON).
+- Integrates seamlessly with FastAPI for request/response handling.
+
+Key Concepts:
+- Data Validation: Ensures that input data matches the expected types (e.g., str, int, float).
+- Serialization: Converts Python objects into formats like JSON for APIs.
+- Integration: FastAPI uses Pydantic models to validate and document request/response schemas.
+
+------------------------------------------------------------
+
+Typing Module
+-------------
+Library: typing
+Description: Provides type hints for Python, improving readability and validation in Pydantic models.
+Official Documentation: https://docs.python.org/3/library/typing.html
+
+Classes:
+- Optional: Indicates that a value can be of a given type or None.
+  Example: Optional[str] means the field can be a string or None.
+- List: Represents a list of elements of a specific type.
+  Example: List[int] means a list containing integers.
+
+Key Concepts:
+- Type Hints: Improve code clarity and enable automatic validation in Pydantic.
+- Optional Fields: Allow flexibility in data models by permitting missing or null values.
+- Collections: Define structured lists of data with enforced types.
+
+------------------------------------------------------------

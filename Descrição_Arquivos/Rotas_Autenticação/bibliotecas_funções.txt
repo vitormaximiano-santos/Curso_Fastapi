@@ -1,0 +1,104 @@
+FastAPI
+--------
+Library: fastapi
+Description: FastAPI is a modern, high-performance web framework for building APIs with Python. 
+It is designed around Python type hints and provides automatic interactive documentation (Swagger UI, ReDoc).
+Official Documentation: https://fastapi.tiangolo.com
+
+Function: APIRouter, HTTPException, Depends
+Description: 
+- APIRouter: Allows modular route definitions that can be included in the main application.
+- HTTPException: Used to raise errors with custom status codes and messages.
+- Depends: Implements dependency injection, automatically resolving functions or classes as parameters.
+
+Key Concepts:
+- Modular Routing: Organize routes into separate files for maintainability.
+- Error Handling: Raise HTTPException to return structured error responses.
+- Dependency Injection: Simplifies passing sessions, tokens, or other shared resources into routes.
+
+------------------------------------------------------------
+
+SQLAlchemy ORM
+---------------
+Library: sqlalchemy.orm
+Description: SQLAlchemy ORM provides tools for mapping Python classes to database tables and managing sessions.
+Official Documentation: https://docs.sqlalchemy.org/en/20/orm/
+
+Function: Session
+Description: Represents a database session for querying and persisting objects.
+
+Key Concepts:
+- ORM Mapping: Classes like Usuario map to database tables.
+- Session Lifecycle: Sessions are created, used, and closed to interact with the database.
+- Querying: Provides methods to filter, retrieve, and manipulate database records.
+
+------------------------------------------------------------
+
+Passlib
+--------
+Library: passlib.context
+Description: Passlib is a password hashing library for Python. It supports many secure hashing algorithms 
+and provides tools for managing password storage and verification.
+Official Documentation: https://passlib.readthedocs.io/en/stable/
+
+Function: CryptContext
+Description: CryptContext is a configuration object that defines which hashing algorithms to use, 
+how to verify passwords, and how to migrate old hashes to new schemes.
+
+Key Concepts:
+- Hashing: One-way transformation of a password into a secure string.
+- Schemes: Algorithms like bcrypt, argon2, sha256_crypt.
+- Verification: Checking if a given password matches a stored hash.
+
+------------------------------------------------------------
+
+Python-JOSE
+------------
+Library: jose
+Description: Python-JOSE is a library for handling JSON Web Tokens (JWT) and other JOSE standards.
+Official Documentation: https://python-jose.readthedocs.io/en/latest/
+
+Function: jwt, JWTError
+Description: 
+- jwt: Provides methods to encode and decode JWT tokens.
+- JWTError: Exception raised when token decoding or validation fails.
+
+Key Concepts:
+- JWT: JSON Web Token used for authentication and authorization.
+- Claims: Payload data inside the token (e.g., "sub" for user ID, "exp" for expiration).
+- Security: Tokens are signed with SECRET_KEY and validated with ALGORITHM.
+
+------------------------------------------------------------
+
+Datetime
+---------
+Library: datetime
+Description: Provides classes for manipulating dates and times.
+Official Documentation: https://docs.python.org/3/library/datetime.html
+
+Function: datetime, timedelta, timezone
+Description: 
+- datetime: Represents a specific point in time.
+- timedelta: Represents a duration of time.
+- timezone: Represents time zone information.
+
+Key Concepts:
+- Expiration: Tokens include "exp" claim to enforce validity periods.
+- UTC: Ensures consistent time handling across systems.
+- Durations: timedelta used to set token lifetimes (minutes, days).
+
+------------------------------------------------------------
+
+FastAPI Security
+-----------------
+Library: fastapi.security
+Description: Provides security utilities for authentication and authorization in FastAPI applications.
+Official Documentation: https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/
+
+Function: OAuth2PasswordRequestForm
+Description: A dependency class that parses form data for OAuth2 login requests (username and password).
+
+Key Concepts:
+- OAuth2: Authorization framework for secure delegated access.
+- Form-Based Login: Supports login via form fields instead of JSON.
+- Integration: Works with Depends to inject parsed form data into routes.
