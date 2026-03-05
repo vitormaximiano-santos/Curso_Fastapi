@@ -1,13 +1,105 @@
-- def criar_token(id_usuario,duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
+FUNCTION: criar_token
+
+Code:
+def criar_token(id_usuario, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
     data_expiracao = datetime.now(timezone.utc) + duracao_token
-    dic_informacoes = {"sub": str(id_usuario),"exp": data_expiracao}
-    jwt_token = jwt.encode(dic_informacoes, SECRET_KEY,ALGORITHM)
+    dic_informacoes = {"sub": str(id_usuario), "exp": data_expiracao}
+    jwt_token = jwt.encode(dic_informacoes, SECRET_KEY, ALGORITHM)
     token = f"awifs2jde23j2dka{id_usuario}"
     return jwt_token
 
-    - "def criar_token(id_usuario,duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))":
-            - def criar_token: created an function called "criar_token"
-            - id_usuario: refers to datas inside in column "id_usuario" in sql database.
-            - duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES): defines the time during which the token is valid 
-                - timedelta: is Python’s way of representing time intervals. It lets you add, subtract, 
-                             and measure durations between  dates and times with precision down to microseconds. 
+---
+
+1. "def criar_token(id_usuario, duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))"
+   - def criar_token: defines a function named "criar_token".
+   - id_usuario: represents the user’s ID, typically retrieved from the "id_usuario" column in the SQL database.
+   - duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES):
+       - Sets the default token duration based on a predefined constant (ACCESS_TOKEN_EXPIRE_MINUTES).
+       - timedelta: Python’s way of representing time intervals, allowing precise calculations of durations between dates/times.
+
+2. "data_expiracao = datetime.now(timezone.utc) + duracao_token"
+   - datetime.now(timezone.utc):
+       - datetime.now(): returns the current date and time.
+       - timezone.utc: ensures the time is expressed in Coordinated Universal Time (UTC).
+       - Together: produces the exact current UTC timestamp.
+   - Adding duracao_token: calculates the expiration time by adding the token’s duration to the current UTC time.
+
+3. "dic_informacoes = {"sub": str(id_usuario), "exp": data_expiracao}"
+   - dic_informacoes: dictionary containing the JWT payload (claims).
+   - Claims: pieces of information stored inside the token.
+     - "sub":
+         - Stands for "subject".
+         - Identifies the principal (user) the token refers to.
+         - Example: "sub": "123" → token belongs to user with ID 123.
+     - "exp":
+         - Stands for "expiration time".
+         - Defines the exact timestamp when the token becomes invalid.
+         - Example: "exp": 2026-03-02T12:52:00Z → token expires at that time.
+
+4. "jwt_token = jwt.encode(dic_informacoes, SECRET_KEY, ALGORITHM)"
+   - Generates a secure JWT string by encoding the payload (sub, exp).
+   - Signs the token with SECRET_KEY using the chosen ALGORITHM.
+   - jwt.encode:
+       - Creates a JWT string from payload (claims), secret key, and algorithm.
+       - Encode: means “take your user data, sign it with a secret key, and produce a secure JWT string.”
+       - Claims: the information inside the JWT (who it belongs to, when it expires, etc.).
+
+5. "token = f'awifs2jde23j2dka{id_usuario}'" (created for testing purposes, but not present in the final version.)
+   - Creates a string with a prefix and the user’s ID.
+   - Appears unused in the return statement (jwt_token is returned instead).
+   - Possibly a placeholder or debugging artifact.
+
+6. "return jwt_token"
+   - Returns the encoded JWT string.
+   - This token is then used for authentication in the system.
+
+---
+
+SUMMARY
+- criar_token generates a JWT for a given user ID.
+- It calculates an expiration time, builds claims ("sub" and "exp"), and encodes them into a signed JWT.
+- The result is a secure token that authenticates the user and expires after the defined duration.
+
+    
+Code:
+    def autenticar_usuario(email, senha, session):  
+    usuario = session.query(Usuario).filter(Usuario.email == email).first()
+    if not usuario:
+        return False 
+   
+    elif not bcript_context.verify(senha, usuario.senha): 
+        return False 
+        
+    return usuario
+
+
+    1. "def autenticar_usuario(email, senha, session):"
+    - Defines a function named "autenticar_usuario".
+    - Parameters:
+        - email: the email address provided by the user trying to log in.
+        - senha: the password provided by the user.
+        - session: the SQLAlchemy session object used to query the database.
+
+    2. "usuario = session.query(Usuario).filter(Usuario.email == email).first()"
+    - session.query(Usuario): creates a query for the Usuario table/class.
+    - filter(Usuario.email == email): filters the query to find a user whose email matches the provided email.
+    - first(): returns the first matching record, or None if no user is found.
+    - usuario: variable that stores the user object retrieved from the database.
+
+    3. "if not usuario:"
+    - Checks if no user was found (usuario is None).
+    - If true, returns False → authentication fails because the email does not exist in the database.
+
+    4. "elif not bcript_context.verify(senha, usuario.senha):"
+    - bcript_context.verify(): verifies if the provided password (senha) matches the stored hashed password (usuario.senha).
+    - If the password does not match, returns False → authentication fails because the password is incorrect.
+
+    5. "return usuario"
+    - If both checks pass (user exists and password is correct), the function returns the user object.
+    - This means authentication succeeded, and the system can use the user’s data (e.g., id, roles).
+
+    SUMMARY
+    - autenticar_usuario is a login validation function.
+    - It checks if a user exists in the database by email.
+    - It verifies if the provided password matches the stored hashed password.
+    - Returns False if authentication fails, or the user object if successful.

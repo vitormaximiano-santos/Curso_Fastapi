@@ -12,16 +12,15 @@ def criar_token(id_usuario,duracao_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_M
     data_expiracao = datetime.now(timezone.utc) + duracao_token
     dic_informacoes = {"sub": str(id_usuario),"exp": data_expiracao}
     jwt_token = jwt.encode(dic_informacoes, SECRET_KEY,ALGORITHM)
-    token = f"awifs2jde23j2dka{id_usuario}"
     return jwt_token
 
 
-def autenticar_usuario(email, senha, session):
+def autenticar_usuario(email, senha, session):  
     usuario = session.query(Usuario).filter(Usuario.email == email).first()
     if not usuario:
         return False # Retorna False se o usuário não for encontrado
    
-    elif not bcript_context.verify(senha, usuario.senha): # Verifica se a senha do usuário é a mesma
+    elif not bcript_context.verify(senha, usuario.senha): # Verifica se a senha do usuário é o mesmo
         return False # Retorna False se a senha não for a mesma
         
     return usuario

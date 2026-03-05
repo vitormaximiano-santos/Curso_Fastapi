@@ -1,0 +1,54 @@
+WHAT ARE CLAIMS IN JWT?
+
+1. General Meaning
+- Claims are pieces of information (key-value pairs) stored inside the payload of a JWT (JSON Web Token).
+- They describe the subject of the token and additional metadata.
+- Claims are what you encode and later decode to know who the token belongs to and what rules apply.
+
+2. Types of Claims
+a) Registered Claims
+   - Standardized fields defined by the JWT specification.
+   - Examples:
+     - "sub" → Subject (who the token refers to, usually a user ID).
+     - "exp" → Expiration time (when the token becomes invalid).
+     - "iss" → Issuer (who created the token).
+     - "aud" → Audience (who the token is intended for).
+
+b) Public Claims
+   - Custom claims agreed upon by different parties.
+   - Example: "role": "admin"
+
+c) Private Claims
+   - Application-specific claims used internally.
+   - Example: "cart_id": "abc123"
+
+3. In Your Code
+dic_informacoes = {"sub": str(id_usuario), "exp": data_expiracao}
+
+- "sub": claim that identifies the user (subject of the token).
+- "exp": claim that defines when the token expires.
+- These claims are encoded into the JWT and later validated when the token is used.
+
+4. Why Claims Matter
+- They carry the essential information for authentication and authorization.
+- Servers use claims to:
+   - Identify the user (sub).
+   - Check if the token is still valid (exp).
+   - Apply permissions or roles if included.
+
+5. Example JWT Payload (Claims)
+{
+  "sub": "123",
+  "exp": 1740922320,
+  "role": "admin"
+}
+
+Explanation:
+- "sub": user ID 123.
+- "exp": expiration timestamp.
+- "role": custom claim showing the user is an admin.
+
+SUMMARY
+- Claims = the data inside a JWT payload.
+- They describe the user, token validity, and other metadata.
+- In your code, "sub" and "exp" are claims that identify the user and set the token’s expiration.

@@ -1,0 +1,48 @@
+WHAT IS ENCODE?
+
+1. General Meaning
+- "Encode" means to transform data into another format.
+- In computing, encoding often refers to converting information into a secure or compact representation.
+- In JWT (JSON Web Token), encoding means turning your claims (dictionary data) into a signed token string.
+
+2. In PyJWT (jwt.encode)
+- jwt.encode() is a function that takes:
+   a) Payload (dic_informacoes) → the data you want inside the token.
+   b) SECRET_KEY → the private key used to sign the token.
+   c) ALGORITHM → the cryptographic method used for signing (e.g., HS256).
+- It produces a JWT string that contains:
+   - Header → metadata (algorithm, type).
+   - Payload → your claims (sub, exp, etc.).
+   - Signature → ensures the token has not been tampered with.
+
+3. The Encoder Process
+- Step 1: Build the header ({"alg": ALGORITHM, "typ": "JWT"}).
+- Step 2: Convert the payload (dic_informacoes) into JSON.
+- Step 3: Base64URL-encode both header and payload.
+- Step 4: Generate a signature using SECRET_KEY and ALGORITHM.
+- Step 5: Concatenate them into the final JWT string:
+    header.payload.signature
+
+4. Example
+dic_informacoes = {"sub": "123", "exp": 1740922320}
+SECRET_KEY = "mysecret"
+ALGORITHM = "HS256"
+
+jwt_token = jwt.encode(dic_informacoes, SECRET_KEY, ALGORITHM)
+
+Result:
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ .eyJzdWIiOiIxMjMiLCJleHAiOjE3NDA5MjIzMjB9...
+ .hG7k9xkQWlF2ZkX3..."
+
+5. Why Encoding Matters
+- It makes the token compact and URL-safe.
+- It secures the payload with a signature.
+- It allows servers and clients to exchange authentication information safely.
+
+SUMMARY
+- Encode = the process of converting your claims into a signed JWT string.
+- In PyJWT, jwt.encode() builds the header, encodes the payload, signs it with your secret key, and returns the final token.
+- This encoded token is then used for authentication and authorization.
+
+
