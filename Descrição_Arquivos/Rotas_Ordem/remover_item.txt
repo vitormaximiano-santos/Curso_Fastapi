@@ -1,0 +1,113 @@
+ROUTE: @order_router.post("/pedido/remover_item/{id_pedido}")
+
+Code:
+@order_router.post("/pedido/remover_item/{id_pedido}")
+async def adicionar_item(id_item_pedido:int,
+                         session: Session = Depends(pegar_sessao),
+                         usuario:Usuario = Depends(verificar_token)):
+    
+    item_pedido = session.query(ItemPedido).filter(ItemPedido.id == id_item_pedido).first()
+    pedido = session.query(Pedido).filter(Pedido.id == item_pedido.pedido).first()
+    
+    if not item_pedido:
+        raise HTTPException(status_code=400, detail="Pedido não encontrado")
+    
+    if not usuario.admin and usuario.id != pedido.usuario:
+        raise HTTPException(status_code=401, detail="Você não tem permissão para remover um item a esse pedido")
+    
+    session.delete(item_pedido)
+    pedido.calcular_preco()
+    session.commit()
+    return {
+        "mensagem": f"Item removidos com sucesso",
+        "quantidade_itens_pedidos": len(pedido.itens),
+        "pedido": pedido    
+        } 
+---
+
+1. "@order_router.post('/pedido/remover_item/{id_pedido}')"
+   - Defines a POST route at /pedidos/pedido/remover_item/{id_pedido}.
+   - POST is chosen because the request modifies data (removes an item from an order).
+   - {id_pedido}: path parameter in the URL, but note the function actually uses id_item_pedido (likely a naming mismatch).
+
+2. "async def remover_item(...)"  
+   - async def: asynchronous function, required by FastAPI for route handlers.
+   - Parameters:
+     - id_item_pedido: integer parameter, identifies the specific item in the order to remove.
+     - session: SQLAlchemy Session object.
+         - Obtained via Depends(pegar_sessao), which injects a database session into the route.
+     - usuario: Usuario object.
+         - Obtained via Depends(verificar_token).
+         - verificar_token: validates the JWT token and retrieves the authenticated user.
+
+---
+
+3. "item_pedido = session.query(ItemPedido).filter(ItemPedido.id == id_item_pedido).first()"
+   - Queries the ItemPedido table for an item with the given ID.
+   - .filter(ItemPedido.id == id_item_pedido): filters by item ID.
+   - .first(): returns the first matching item or None if not found.
+   - item_pedido: variable holding the item object.
+
+4. "pedido = session.query(Pedido).filter(Pedido.id == item_pedido.pedido).first()"
+   - Retrieves the order (Pedido) associated with the item.
+   - Uses the pedido field of item_pedido to find the parent order.
+   - pedido: variable holding the order object.
+
+---
+
+5. "if not item_pedido:"
+   - Checks if the item was not found in the database.
+   - If true → raises an exception.
+
+6. "raise HTTPException(status_code=400, detail='Pedido não encontrado')"
+   - Raises an HTTPException with status code 400 (Bad Request).
+   - detail: message explaining the error.
+   - Prevents removal of items that don’t exist.
+
+---
+
+7. "if not usuario.admin and usuario.id != pedido.usuario:"
+   - Checks if the current user has permission to remove items from the order.
+   - Conditions:
+       - If the user is not an admin (usuario.admin is False).
+       - AND the user’s ID does not match the order’s owner (pedido.usuario).
+   - If both conditions are true → user is unauthorized.
+
+8. "raise HTTPException(status_code=401, detail='Você não tem permissão para remover um item a esse pedido')"
+   - Raises an HTTPException with status code 401 (Unauthorized).
+   - detail: message explaining the error.
+   - Ensures only admins or the order’s owner can remove items.
+
+---
+
+9. "session.delete(item_pedido)"
+   - Marks the item for deletion from the database.
+   - Prepares it to be removed permanently.
+
+10. "pedido.calcular_preco()"
+    - Calls the calcular_preco() method of Pedido.
+    - Recalculates the total price of the order after removing the item.
+    - Ensures the order’s price stays updated.
+
+11. "session.commit()"
+    - Commits the transaction.
+    - Saves the deletion and updated order price permanently in the database.
+
+---
+
+12. "return {'mensagem': 'Item removidos com sucesso', 'quantidade_itens_pedidos': len(pedido.itens), 'pedido': pedido}"
+    - Returns a JSON response confirming the item was removed.
+    - Includes:
+        - mensagem: success message.
+        - quantidade_itens_pedidos: number of items remaining in the order.
+        - pedido: the updated order object.
+
+---
+
+SUMMARY
+- This route removes an item from an existing order.
+- It requires authentication via verificar_token.
+- Checks if the item exists.
+- Ensures only admins or the order’s owner can remove items.
+- Deletes the item, recalculates the order’s total price, and saves changes.
+- Returns a success message with updated order details.

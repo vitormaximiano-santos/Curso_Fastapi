@@ -1,0 +1,44 @@
+ROUTE: @auth_router.get("/refresh")
+
+Code:
+@auth_router.get("/refresh")
+async def use_refresh_token(usuario:Usuario = Depends(verificar_token)):    
+    access_token = criar_token(usuario.id)
+    return {"access_token": access_token,
+              "token_type": "bearer"
+             }
+---
+
+1. "@auth_router.get('/refresh')"
+   - Defines a GET route at /auth/refresh.
+   - Purpose: to refresh the access token using a valid refresh token.
+   - GET is chosen because no new data is being sent, only a request to generate a new token.
+
+2. "async def use_refresh_token(usuario: Usuario = Depends(verificar_token))"
+   - async def: asynchronous function, required by FastAPI for route handlers.
+   - usuario: parameter typed as Usuario (SQLAlchemy model).
+       - Obtained via Depends(verificar_token).
+       - verificar_token: dependency function that validates the refresh token and retrieves the corresponding user.
+   - If the refresh token is invalid, the dependency will raise an error before this function executes.
+
+---
+
+3. "access_token = criar_token(usuario.id)"
+   - Calls criar_token() to generate a new short-lived access token.
+   - Uses the user’s ID (usuario.id) as the "sub" claim.
+   - Ensures the user can continue making authenticated requests without logging in again.
+
+---
+
+4. "return {'access_token': access_token, 'token_type': 'bearer'}"
+   - Returns a JSON response containing:
+       - access_token: the newly generated token.
+       - token_type: "bearer" → indicates the token type used in Authorization headers.
+
+---
+
+SUMMARY
+- This route handles refreshing access tokens.
+- It depends on verificar_token to validate the refresh token and identify the user.
+- If valid, it issues a new access token tied to the user’s ID.
+- Returns the new token in JSON format for continued authentication.

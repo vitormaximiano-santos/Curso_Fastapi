@@ -1,0 +1,48 @@
+ROUTE: @order_router.get("/listar/pedidos-usuario", response_model=List[SchemaResponsePedido])
+
+Code:
+@order_router.get("/listar/pedidos-usuario",response_model=List[SchemaResponsePedido])
+def listar_pedidos_usuario(session: Session = Depends(pegar_sessao),usuario:Usuario = Depends(verificar_token)):
+    pedidos = session.query(Pedido).filter(Pedido.usuario == usuario.id).all()
+    return  pedidos
+---
+
+1. "@order_router.get('/listar/pedidos-usuario', response_model=List[SchemaResponsePedido])"
+   - Defines a GET route at /pedidos/listar/pedidos-usuario.
+   - GET is chosen because the request retrieves data (list of orders for a specific user).
+   - response_model=List[SchemaResponsePedido]:
+       - Ensures the response is automatically validated and serialized into a list of SchemaResponsePedido objects.
+       - SchemaResponsePedido is a Pydantic schema that defines how each order should be represented in the response.
+
+2. "def listar_pedidos_usuario(...)"  
+   - Defines the function that will handle requests to this route.
+   - Parameters:
+     - session: SQLAlchemy Session object.
+         - Obtained via Depends(pegar_sessao), which injects a database session into the route.
+     - usuario: Usuario object.
+         - Obtained via Depends(verificar_token).
+         - verificar_token: validates the JWT token and retrieves the authenticated user.
+         - Ensures only authenticated users can access their orders.
+
+---
+
+3. "pedidos = session.query(Pedido).filter(Pedido.usuario == usuario.id).all()"
+   - Queries the Pedido table for all orders belonging to the authenticated user.
+   - .filter(Pedido.usuario == usuario.id): filters orders by the user’s ID.
+   - .all(): returns a list of all matching orders.
+   - pedidos: variable holding the list of orders for the user.
+
+---
+
+4. "return pedidos"
+   - Returns the list of orders.
+   - Because response_model=List[SchemaResponsePedido] is defined, FastAPI automatically converts the Pedido objects into SchemaResponsePedido objects.
+   - Ensures the response is structured and validated according to the schema.
+
+---
+
+SUMMARY
+- This route lists all orders belonging to the authenticated user.
+- It requires authentication via verificar_token.
+- Queries the database for orders linked to the user’s ID.
+- Returns the list of orders, validated and serialized into SchemaResponsePedido format.

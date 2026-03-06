@@ -1,0 +1,87 @@
+ROUTE: @auth_router.post("/Login")
+
+Code:
+@auth_router.post("/Login")
+async def login(Schema_Login: SchemaLogin, session:Session = Depends(pegar_sessao)):
+    usuario = autenticar_usuario(Schema_Login.email, Schema_Login.senha, session)  
+    if not usuario:
+       raise HTTPException(status_code=400, detail="Usuário não encontrado, ou senha incorreta")
+    else:
+      access_token = criar_token(usuario.id)
+      refresh_token = criar_token(usuario.id,duracao_token=timedelta(days=7))
+      return {"access_token": access_token,
+              "refresh_token": refresh_token,
+              "token_type": "bearer"
+             }
+
+---
+
+1. "@auth_router.post('/Login')"
+   - Defines a POST route at /auth/Login.
+   - Used for user login/authentication.
+   - POST is chosen because credentials (email + password) are sent to the server.
+
+2. "async def login(Schema_Login: SchemaLogin, session: Session = Depends(pegar_sessao))"
+   - async def: asynchronous function, required by FastAPI for route handlers.
+   - Schema_Login: parameter typed as SchemaLogin (Pydantic model).
+       - Ensures the request body matches the expected schema (email, senha).
+   - session: SQLAlchemy Session object.
+       - Obtained via Depends(pegar_sessao), which injects a database session into the route.
+
+---
+
+3. "usuario = autenticar_usuario(Schema_Login.email, Schema_Login.senha, session)"
+   - Calls the helper function autenticar_usuario().
+   - Parameters:
+       - Schema_Login.email → email provided by the user.
+       - Schema_Login.senha → password provided by the user.
+       - session → database session.
+   - Returns:
+       - usuario object if authentication succeeds.
+       - False if authentication fails.
+
+---
+
+4. "if not usuario:"
+   - Checks if authentication failed (usuario is False).
+   - If true → raises an exception.
+
+5. "raise HTTPException(status_code=400, detail='Usuário não encontrado, ou senha incorreta')"
+   - Raises an HTTPException with status code 400 (Bad Request).
+   - detail: message explaining the error.
+   - Covers both cases: user not found or incorrect password.
+
+---
+
+6. "else:"
+   - Executes if authentication succeeded (usuario object exists).
+   - Proceeds to generate tokens.
+
+---
+
+7. "access_token = criar_token(usuario.id)"
+   - Calls criar_token() to generate a short-lived access token.
+   - Payload includes "sub" (user ID) and "exp" (expiration time).
+   - Used for immediate authentication in API requests.
+
+8. "refresh_token = criar_token(usuario.id, duracao_token=timedelta(days=7))"
+   - Calls criar_token() again to generate a refresh token.
+   - Duration set to 7 days (longer-lived).
+   - Allows user to request new access tokens without logging in again.
+
+---
+
+9. "return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}"
+   - Returns a JSON response containing:
+       - access_token: short-lived token for authentication.
+       - refresh_token: longer-lived token for renewing access.
+       - token_type: "bearer" → indicates the token type used in Authorization headers.
+
+---
+
+SUMMARY
+- This route handles user login.
+- It validates credentials using autenticar_usuario().
+- If invalid → raises HTTPException (400).
+- If valid → generates both access and refresh tokens.
+- Returns tokens in JSON format for use in authentication headers.

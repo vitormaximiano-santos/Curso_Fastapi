@@ -1,0 +1,67 @@
+ROUTE: @order_router.get("/listar_pedidos")
+
+Code:
+@order_router.get("/listar_pedidos")
+async def listar_pedidos(session: Session = Depends(pegar_sessao),usuario:Usuario = Depends(verificar_token)):
+    if not usuario.admin:
+        raise HTTPException(status_code=401, detail="Você não tem permissão para acessar essa rota")
+    
+    else:
+        pedidos = session.query(Pedido).all()
+        return {
+            "pedidos": pedidos
+            }
+---
+
+1. "@order_router.get('/listar_pedidos')"
+   - Defines a GET route at /pedidos/listar_pedidos.
+   - GET is chosen because the request retrieves data (list of orders) without modifying anything.
+   - This route belongs to order_router, which groups all order-related endpoints under the "/pedidos" prefix.
+
+2. "async def listar_pedidos(session: Session = Depends(pegar_sessao), usuario: Usuario = Depends(verificar_token))"
+   - async def: asynchronous function, required by FastAPI for route handlers.
+   - session: SQLAlchemy Session object.
+       - Obtained via Depends(pegar_sessao), which injects a database session into the route.
+   - usuario: Usuario object.
+       - Obtained via Depends(verificar_token).
+       - verificar_token: validates the JWT token and retrieves the authenticated user.
+       - Ensures only authenticated users can attempt to access this route.
+
+---
+
+3. "if not usuario.admin:"
+   - Checks if the authenticated user is not an admin.
+   - Only admin users are allowed to list all orders.
+   - If the user is not an admin → raises an exception.
+
+4. "raise HTTPException(status_code=401, detail='Você não tem permissão para acessar essa rota')"
+   - Raises an HTTPException with status code 401 (Unauthorized).
+   - detail: message explaining the error.
+   - Prevents non-admin users from accessing the list of all orders.
+
+---
+
+5. "else:"
+   - Executes if the authenticated user is an admin.
+   - Proceeds to retrieve all orders from the database.
+
+---
+
+6. "pedidos = session.query(Pedido).all()"
+   - Queries the Pedido table for all orders.
+   - .all(): returns a list of all order objects in the database.
+   - pedidos: variable holding the list of orders.
+
+---
+
+7. "return {'pedidos': pedidos}"
+   - Returns a JSON response containing the list of orders.
+   - Key "pedidos": holds the list of Pedido objects retrieved from the database.
+
+---
+
+SUMMARY
+- This route lists all orders in the system.
+- It requires authentication via verificar_token.
+- Only admin users are authorized to access it.
+- If authorized, it queries the database and returns all orders in JSON format.

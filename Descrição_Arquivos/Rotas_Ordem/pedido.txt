@@ -1,0 +1,59 @@
+ROUTE: @order_router.post("/pedido")
+
+Code:
+@order_router.post("/pedido") 
+
+async def criar_pedido(SchemaPedido: SchemaPedido,session: Session = Depends(pegar_sessao)): 
+    
+    novo_pedido = Pedido(usuario = SchemaPedido.usuario)
+    
+    session.add(novo_pedido)
+    
+    session.commit()
+    
+    return {"Mensagem": f"Pedido criado com sucesso, id do usuario: {novo_pedido.usuario}"}
+---
+
+1. "@order_router.post('/pedido')"
+   - Defines a POST route at /pedidos/pedido.
+   - POST is chosen because data (order details) is being sent to the server.
+   - This route belongs to order_router, which groups all order-related endpoints under the "/pedidos" prefix.
+
+2. "async def criar_pedido(SchemaPedido: SchemaPedido, session: Session = Depends(pegar_sessao))"
+   - async def: asynchronous function, required by FastAPI for route handlers.
+   - SchemaPedido: parameter typed as SchemaPedido (Pydantic model).
+       - Ensures the request body matches the expected schema (e.g., user ID, order details).
+   - session: SQLAlchemy Session object.
+       - Obtained via Depends(pegar_sessao), which injects a database session into the route.
+
+---
+
+3. "novo_pedido = Pedido(usuario = SchemaPedido.usuario)"
+   - Creates a new Pedido object (order).
+   - Sets the "usuario" field of the order to the user ID provided in SchemaPedido.
+   - This links the order to the user who created it.
+
+---
+
+4. "session.add(novo_pedido)"
+   - Adds the new order object to the database session.
+   - Prepares it for insertion into the database.
+
+5. "session.commit()"
+   - Commits the transaction.
+   - Saves the new order permanently in the database.
+
+---
+
+6. "return {'Mensagem': f'Pedido criado com sucesso, id do usuario: {novo_pedido.usuario}'}"
+   - Returns a JSON response confirming order creation.
+   - Includes the user ID associated with the new order in the success message.
+
+---
+
+SUMMARY
+- This route handles order creation.
+- It validates input using SchemaPedido.
+- Creates a new Pedido object linked to the user.
+- Saves the order in the database.
+- Returns a success message with the user ID.

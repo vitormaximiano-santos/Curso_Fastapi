@@ -1,0 +1,80 @@
+ROUTE: @auth_router.post("/Login_form")
+
+Code:
+@auth_router.post("/Login_form")
+async def login_form(dados_formulario: OAuth2PasswordRequestForm = Depends(), session:Session = Depends(pegar_sessao)):
+    usuario = autenticar_usuario(dados_formulario.username, dados_formulario.password, session)
+    if not usuario:
+       raise HTTPException(status_code=400, detail="Usuário não encontrado, ou senha incorreta")
+    else:
+      access_token = criar_token(usuario.id)
+      return {"access_token": access_token,
+              "token_type": "bearer"
+             }
+
+---
+
+1. "@auth_router.post('/Login_form')"
+   - Defines a POST route at /auth/Login_form.
+   - Used for user login/authentication via form data.
+   - POST is chosen because credentials are sent to the server.
+
+2. "async def login_form(dados_formulario: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(pegar_sessao))"
+   - async def: asynchronous function, required by FastAPI for route handlers.
+   - dados_formulario: parameter typed as OAuth2PasswordRequestForm.
+       - This is a FastAPI utility class for handling login forms.
+       - Provides standardized fields: username and password.
+   - session: SQLAlchemy Session object.
+       - Obtained via Depends(pegar_sessao), which injects a database session into the route.
+
+---
+
+3. "usuario = autenticar_usuario(dados_formulario.username, dados_formulario.password, session)"
+   - Calls the helper function autenticar_usuario().
+   - Parameters:
+       - dados_formulario.username → the username (email) provided in the form.
+       - dados_formulario.password → the password provided in the form.
+       - session → database session.
+   - Returns:
+       - usuario object if authentication succeeds.
+       - False if authentication fails.
+
+---
+
+4. "if not usuario:"
+   - Checks if authentication failed (usuario is False).
+   - If true → raises an exception.
+
+5. "raise HTTPException(status_code=400, detail='Usuário não encontrado, ou senha incorreta')"
+   - Raises an HTTPException with status code 400 (Bad Request).
+   - detail: message explaining the error.
+   - Covers both cases: user not found or incorrect password.
+
+---
+
+6. "else:"
+   - Executes if authentication succeeded (usuario object exists).
+   - Proceeds to generate an access token.
+
+---
+
+7. "access_token = criar_token(usuario.id)"
+   - Calls criar_token() to generate a short-lived access token.
+   - Payload includes "sub" (user ID) and "exp" (expiration time).
+   - Used for immediate authentication in API requests.
+
+---
+
+8. "return {'access_token': access_token, 'token_type': 'bearer'}"
+   - Returns a JSON response containing:
+       - access_token: short-lived token for authentication.
+       - token_type: "bearer" → indicates the token type used in Authorization headers.
+
+---
+
+SUMMARY
+- This route handles user login via OAuth2 form data.
+- It validates credentials using autenticar_usuario().
+- If invalid → raises HTTPException (400).
+- If valid → generates an access token.
+- Returns token in JSON format for use in authentication headers.

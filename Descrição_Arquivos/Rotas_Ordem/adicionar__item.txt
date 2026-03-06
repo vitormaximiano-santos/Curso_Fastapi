@@ -1,0 +1,128 @@
+ROUTE: @order_router.post("/pedido/adicionar_item/{id_pedido}")
+
+Code:
+@order_router.post("/pedido/adicionar_item/{id_pedido}")
+async def adicionar_item(id_pedido:int,
+                         item_pedido_schema:SchemaItemPedido,
+                         session: Session = Depends(pegar_sessao),
+                         usuario:Usuario = Depends(verificar_token)):
+    
+    pedido = session.query(Pedido).filter(Pedido.id == id_pedido).first()
+    
+    if not pedido:
+        raise HTTPException(status_code=400, detail="Pedido não encontrado")
+    
+    if not usuario.admin and usuario.id != pedido.usuario:
+        raise HTTPException(status_code=401, detail="Você não tem permissão para adicionar item a esse pedido")
+    
+    item_pedido = ItemPedido(quantidade=item_pedido_schema.quantidade,
+                             sabor=item_pedido_schema.sabor,
+                             tamanho=item_pedido_schema.tamanho,
+                             preco_unitario=item_pedido_schema.preco_unitario,
+                             pedido=pedido.id)
+    
+    
+    session.add(item_pedido)
+    pedido.calcular_preco()
+    session.commit()
+    return {
+        "mensagem": f"Item adicionado com sucesso",
+        "item": item_pedido
+        }
+        
+
+1. "@order_router.post('/pedido/adicionar_item/{id_pedido}')"
+   - Defines a POST route at /pedidos/pedido/adicionar_item/{id_pedido}.
+   - POST is chosen because the request modifies data (adds an item to an order).
+   - {id_pedido}: path parameter representing the ID of the order to which the item will be added.
+
+2. "async def adicionar_item(...)"  
+   - async def: asynchronous function, required by FastAPI for route handlers.
+   - Parameters:
+     - id_pedido: integer path parameter, identifies the order.
+     - item_pedido_schema: SchemaItemPedido (Pydantic model).
+         - Ensures the request body matches the expected schema (quantity, flavor, size, unit price).
+     - session: SQLAlchemy Session object.
+         - Obtained via Depends(pegar_sessao), which injects a database session into the route.
+     - usuario: Usuario object.
+         - Obtained via Depends(verificar_token).
+         - verificar_token: validates the JWT token and retrieves the authenticated user.
+
+---
+
+3. "pedido = session.query(Pedido).filter(Pedido.id == id_pedido).first()"
+   - Queries the Pedido table for an order with the given ID.
+   - .filter(Pedido.id == id_pedido): filters by order ID.
+   - .first(): returns the first matching order or None if not found.
+   - pedido: variable holding the order object.
+
+---
+
+4. "if not pedido:"
+   - Checks if the order was not found in the database.
+   - If true → raises an exception.
+
+5. "raise HTTPException(status_code=400, detail='Pedido não encontrado')"
+   - Raises an HTTPException with status code 400 (Bad Request).
+   - detail: message explaining the error.
+   - Prevents adding items to non-existent orders.
+
+---
+
+6. "if not usuario.admin and usuario.id != pedido.usuario:"
+   - Checks if the current user has permission to add items to the order.
+   - Conditions:
+       - If the user is not an admin (usuario.admin is False).
+       - AND the user’s ID does not match the order’s owner (pedido.usuario).
+   - If both conditions are true → user is unauthorized.
+
+7. "raise HTTPException(status_code=401, detail='Você não tem permissão para adicionar item a esse pedido')"
+   - Raises an HTTPException with status code 401 (Unauthorized).
+   - detail: message explaining the error.
+   - Ensures only admins or the order’s owner can add items.
+
+---
+
+8. "item_pedido = ItemPedido(...)"  
+   - Creates a new ItemPedido object (order item).
+   - Fields are populated from item_pedido_schema:
+       - quantidade: number of items.
+       - sabor: flavor of the item.
+       - tamanho: size of the item.
+       - preco_unitario: unit price of the item.
+       - pedido: linked to the order ID (pedido.id).
+   - This object represents the new item being added to the order.
+
+---
+
+9. "session.add(item_pedido)"
+   - Adds the new item object to the database session.
+   - Prepares it for insertion into the database.
+
+10. "pedido.calcular_preco()"
+    - Calls the calcular_preco() method of Pedido.
+    - Recalculates the total price of the order after adding the new item.
+    - Ensures the order’s price stays updated.
+
+11. "session.commit()"
+    - Commits the transaction.
+    - Saves the new item and updated order price permanently in the database.
+
+---
+
+12. "return {'mensagem': 'Item adicionado com sucesso', 'item': item_pedido}"
+    - Returns a JSON response confirming the item was added.
+    - Includes:
+        - mensagem: success message.
+        - item: the newly added item object.
+
+---
+
+SUMMARY
+- This route adds a new item to an existing order.
+- It requires authentication via verificar_token.
+- Checks if the order exists.
+- Ensures only admins or the order’s owner can add items.
+- Creates a new ItemPedido object with the provided details.
+- Saves the item in the database and recalculates the order’s total price.
+- Returns a success message with the item details.

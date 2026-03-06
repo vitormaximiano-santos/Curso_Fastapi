@@ -1,0 +1,38 @@
+EXPLANATION OF auth_router = APIRouter(prefix="/auth", tags=["auth"])
+
+1. "APIRouter"
+   - APIRouter is a FastAPI class used to create and organize groups of routes.
+   - It allows you to separate different parts of your application into modules (e.g., authentication, users, products).
+   - Each router can have its own prefix, tags, and set of endpoints.
+
+2. "prefix='/auth'"
+   - The prefix is a path segment automatically added to all routes defined in this router.
+   - Example:
+       - If you define a route as @auth_router.get("/login"), the actual path becomes "/auth/login".
+       - If you define @auth_router.post("/Criar_Conta"), the actual path becomes "/auth/Criar_Conta".
+   - Purpose: keeps routes organized under a common base path (here, all authentication-related routes are grouped under "/auth").
+
+3. "tags=['auth']"
+   - Tags are metadata labels used to categorize routes.
+   - They are especially useful in API documentation (Swagger UI / OpenAPI).
+   - Example:
+       - All routes in this router will appear under the "auth" section in the interactive docs.
+   - Purpose: improves readability and organization of API endpoints.
+
+4. "auth_router"
+   - This variable stores the router instance.
+   - It is later included in the main FastAPI application using app.include_router(auth_router).
+   - This makes all routes defined in auth_router available in the API.
+
+---
+
+SUMMARY
+- APIRouter: creates a modular group of routes.
+- prefix="/auth": ensures all routes start with "/auth".
+- tags=["auth"]: categorizes routes under "auth" in documentation.
+- auth_router: the router object that holds all authentication-related endpoints.
+
+EXAMPLE USAGE
+- @auth_router.get("/") → actual path: /auth/
+- @auth_router.post("/Login") → actual path: /auth/Login
+- @auth_router.get("/refresh") → actual path: /auth/refresh

@@ -1,0 +1,100 @@
+ROUTE: @auth_router.post("/Criar_Conta")
+
+Code:
+@auth_router.post("/Criar_Conta")
+async def criar_conta(Schema_Usuario: SchemaUsuario, session:Session = Depends(pegar_sessao)):
+    # Verifica se já existe usuário com o mesmo email
+    usuario = session.query(Usuario).filter(Usuario.email == Schema_Usuario.email).first()
+    if usuario:
+        raise HTTPException(status_code=400, detail="Usuário já existe")
+    else:   
+        # Criptografa a senha
+        senha_criptada = bcript_context.hash(Schema_Usuario.senha)
+        # Cria novo usuário (ajustando ordem dos parâmetros)
+        novo_usuario = Usuario(Schema_Usuario.nome, Schema_Usuario.email, senha_criptada, Schema_Usuario.ativo, Schema_Usuario.admin)
+        session.add(novo_usuario)
+        session.commit()
+        return {"mensagem": f"Conta criada com sucesso: {Schema_Usuario.email}"}
+
+---
+
+1. "@auth_router.post('/Criar_Conta')"
+   - Defines a POST route at /auth/Criar_Conta.
+   - Used to create a new user account.
+   - POST is chosen because data (user info) is being sent to the server.
+
+2. "async def criar_conta(Schema_Usuario: SchemaUsuario, session: Session = Depends(pegar_sessao))"
+   - async def: asynchronous function, required by FastAPI for route handlers.
+   - Schema_Usuario: parameter typed as SchemaUsuario (Pydantic model).
+       - Ensures the request body matches the expected schema (name, email, password, etc.).
+   - session: SQLAlchemy Session object.
+       - Obtained via Depends(pegar_sessao), which injects a database session into the route.
+
+---
+
+3. "usuario = session.query(Usuario).filter(Usuario.email == Schema_Usuario.email).first()"
+   - Queries the Usuario table for a record with the same email as provided.
+   - .filter(Usuario.email == Schema_Usuario.email): filters by email.
+   - .first(): returns the first matching user or None if no match.
+   - usuario: variable holding the result.
+
+---
+
+4. "if usuario:"
+   - Checks if a user with the given email already exists.
+   - If true → raises an exception.
+
+5. "raise HTTPException(status_code=400, detail='Usuário já existe')"
+   - Raises an HTTPException with status code 400 (Bad Request).
+   - detail: message explaining the error.
+   - Prevents duplicate accounts with the same email.
+
+---
+
+6. "else:"
+   - Executes if no user with the given email exists.
+   - Proceeds to create a new account.
+
+---
+
+7. "senha_criptada = bcript_context.hash(Schema_Usuario.senha)"
+   - Uses bcript_context.hash() to hash the provided password.
+   - Ensures the password is stored securely in the database.
+   - senha_criptada: variable holding the hashed password.
+
+---
+
+8. "novo_usuario = Usuario(Schema_Usuario.nome, Schema_Usuario.email, senha_criptada, Schema_Usuario.ativo, Schema_Usuario.admin)"
+   - Creates a new Usuario object with the provided data.
+   - Parameters:
+       - nome: user’s name.
+       - email: user’s email.
+       - senha_criptada: hashed password.
+       - ativo: active status.
+       - admin: admin status.
+
+---
+
+9. "session.add(novo_usuario)"
+   - Adds the new user object to the database session.
+   - Prepares it for insertion.
+
+10. "session.commit()"
+    - Commits the transaction.
+    - Saves the new user permanently in the database.
+
+---
+
+11. "return {'mensagem': f'Conta criada com sucesso: {Schema_Usuario.email}'}"
+    - Returns a JSON response confirming account creation.
+    - Includes the user’s email in the success message.
+
+---
+
+SUMMARY
+- This route handles account creation.
+- It validates input using SchemaUsuario.
+- Checks for duplicate emails.
+- Hashes the password for security.
+- Creates and saves a new user in the database.
+- Returns a success message if everything works.

@@ -5,28 +5,18 @@ from schemas import SchemaPedido, SchemaItemPedido, SchemaUsuario, SchemaRespons
 from models import Pedido, Usuario, ItemPedido
 from typing import List
 
-# rotas para autenticação
-order_router = APIRouter(prefix="/pedidos", tags=["pedidos"],dependencies=[Depends(verificar_token)] )# "APIRouter" é uma classe que define rotas
-# "prefix" é o caminho para a rota,serve para organizar as rotas
-# "tags" é uma lista de tags para a rota, ajuda a organizar as rotas
 
-#  prefix x tags: a diferença é que prefix é o caminho(rota) e tags são as categorias , ou seja, você pode ter várias rotas com o mesmo prefixo, mas cada rota pode ser associada a uma tag diferente
+order_router = APIRouter(prefix="/pedidos", tags=["pedidos"],dependencies=[Depends(verificar_token)] )
 
-# rotas para pedidos
-@order_router.get("/") # usa @order_router.get() para registrar a rota
-# '/' faz com que a função seja executada quando o usuário acessa a rota /order/
-
-async def pedidos(): # usa async def para registrar a função que será executada quando a rota for acessada
-    
-    # a função pedidos() retorna um dicionário com a mensagem "Mensagem"
+@order_router.get("/") 
+async def pedidos(): 
+   
     return {"Mensagem": "Voçe acessou a rota /order/, e está retornando uma mensagem"}
 
-# por enquanto, para acessar essa rota, digite http://127.0.0.1:8000/pedidos/
 
-@order_router.post("/pedido") # usa @order_router.post() para registrar a rota
-# '/pedido' faz com que a função seja executada quando o usuário acessa a rota /pedido/
+@order_router.post("/pedido") 
 
-async def criar_pedido(SchemaPedido: SchemaPedido,session: Session = Depends(pegar_sessao)): # usa async def para registrar a função que será executada quando a rota for acessada
+async def criar_pedido(SchemaPedido: SchemaPedido,session: Session = Depends(pegar_sessao)): 
     
     novo_pedido = Pedido(usuario = SchemaPedido.usuario)
     
@@ -34,7 +24,6 @@ async def criar_pedido(SchemaPedido: SchemaPedido,session: Session = Depends(peg
     
     session.commit()
     
-    # a função criar_pedido() retorna um dicionário com a mensagem "Mensagem"
     return {"Mensagem": f"Pedido criado com sucesso, id do usuario: {novo_pedido.usuario}"}
 
 
@@ -86,6 +75,7 @@ async def adicionar_item(id_pedido:int,
                              tamanho=item_pedido_schema.tamanho,
                              preco_unitario=item_pedido_schema.preco_unitario,
                              pedido=pedido.id)
+    
     
     session.add(item_pedido)
     pedido.calcular_preco()

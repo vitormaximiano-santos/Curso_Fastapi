@@ -1,0 +1,45 @@
+EXPLANATION OF order_router = APIRouter(...)
+
+Code
+order_router = APIRouter(prefix="/pedidos", tags=["pedidos"], dependencies=[Depends(verificar_token)])
+
+
+1. "APIRouter"
+   - APIRouter is a FastAPI class used to create modular groups of routes.
+   - It allows you to separate different parts of your application (e.g., authentication, orders, products).
+   - Each router can have its own prefix, tags, and dependencies.
+
+2. "prefix='/pedidos'"
+   - The prefix is a path segment automatically added to all routes defined in this router.
+   - Example:
+       - If you define @order_router.get("/listar"), the actual path becomes "/pedidos/listar".
+   - Purpose: keeps all order-related routes organized under "/pedidos".
+
+3. "tags=['pedidos']"
+   - Tags are metadata labels used to categorize routes.
+   - They are especially useful in API documentation (Swagger UI / OpenAPI).
+   - Example:
+       - All routes in this router will appear under the "pedidos" section in the interactive docs.
+   - Purpose: improves readability and organization of API endpoints.
+
+4. "dependencies=[Depends(verificar_token)]"
+   - Dependencies are functions that must run before the route handler executes.
+   - Depends(verificar_token):
+       - Ensures that every route in this router requires token verification.
+       - verificar_token is a function that checks if the user’s JWT token is valid.
+       - If the token is invalid or missing, the request will be rejected before reaching the route logic.
+   - Purpose: adds a layer of security so only authenticated users can access these routes.
+
+5. "order_router"
+   - This variable stores the router instance.
+   - It is later included in the main FastAPI application using app.include_router(order_router).
+   - This makes all routes defined in order_router available in the API.
+
+---
+
+SUMMARY
+- APIRouter: creates a modular group of routes.
+- prefix="/pedidos": ensures all routes start with "/pedidos".
+- tags=["pedidos"]: categorizes routes under "pedidos" in documentation.
+- dependencies=[Depends(verificar_token)]: enforces authentication for all routes in this router.
+- order_router: the router object that holds all order-related endpoints.
